@@ -1,5 +1,4 @@
-﻿using OnlineSchoolForKids.Core.Entities;
-
+﻿
 namespace OnlineSchoolForKids.Repositories.Configurations
 {
     internal class KidConfingurations : IEntityTypeConfiguration<Kid>

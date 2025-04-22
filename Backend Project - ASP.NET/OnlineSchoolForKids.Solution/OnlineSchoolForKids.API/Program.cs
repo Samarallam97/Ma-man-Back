@@ -1,6 +1,3 @@
-using OnlineSchoolForKids.Repositories;
-using OnlineSchoolForKids.Repositories.DataSeeding;
-
 namespace OnlineSchoolForKids.API;
 
 public class Program
@@ -13,6 +10,7 @@ public class Program
 		#region DI Services Container
 
 		builder.Services.AddControllers();
+
 		builder.Services.AddEndpointsApiExplorer();
 
 		#region Databases
@@ -23,19 +21,21 @@ public class Program
 		});
 		#endregion
 
+		builder.Services.AddIdentityServicesToContainer(builder.Configuration);
+
 		builder.Services.AddSwaggerGen(); 
 		#endregion
 
 		var app = builder.Build();
 
-		#region Update Databases
+		#region Update Database
 		
 		var scope = app.Services.CreateScope();
 		var serviceProvider = scope.ServiceProvider;
 
-		var ApplicationDbContext = serviceProvider.GetService<ApplicationDbContext>();
+		var ApplicationDbContext = serviceProvider.GetService<ApplicationDbContext>() !;
 
-		var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+		var loggerFactory = serviceProvider.GetService<ILoggerFactory>() !;
 
 		try
 		{
@@ -49,10 +49,11 @@ public class Program
 		#endregion
 
 		#region Data Seeding
-		await ApplicationSeeder.SeedAsync(ApplicationDbContext);
+		await ApplicationSeeder.SeedAsync(ApplicationDbContext!);
 		#endregion
 
 		#region MiddleWares
+
 		if (app.Environment.IsDevelopment())
 		{
 			app.UseSwagger();
@@ -61,6 +62,7 @@ public class Program
 
 		app.UseHttpsRedirection();
 
+		app.UseAuthentication();
 		app.UseAuthorization();
 
 		app.MapControllers(); 

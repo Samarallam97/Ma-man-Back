@@ -1,0 +1,8 @@
+﻿global using OnlineSchoolForKids.Core.Services.Interfaces;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.IdentityModel.Tokens;
+global using OnlineSchoolForKids.Core.Entities;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Security.Claims;
+global using System.Text;

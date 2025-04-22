@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineSchoolForKids.Repositories;
 
@@ -11,9 +12,11 @@ using OnlineSchoolForKids.Repositories;
 namespace OnlineSchoolForKids.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250422090308_Database Setup Part2")]
+    partial class DatabaseSetupPart2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,21 +38,6 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                     b.HasIndex("ContentId");
 
                     b.ToTable("AgeGroupContent");
-                });
-
-            modelBuilder.Entity("ContentUser", b =>
-                {
-                    b.Property<int>("ContentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ContentId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ContentUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -228,41 +216,6 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories", (string)null);
-                });
-
-            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("ContentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContentId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Content", b =>
@@ -513,21 +466,6 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ContentUser", b =>
-                {
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.Content", null)
-                        .WithMany()
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("OnlineSchoolForKids.Core.Entities.Role", null)
@@ -599,21 +537,6 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                         .WithOne()
                         .HasForeignKey("OnlineSchoolForKids.Core.Entities.Adult", "Id")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Comment", b =>
-                {
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.Content", null)
-                        .WithOne()
-                        .HasForeignKey("OnlineSchoolForKids.Core.Entities.Comment", "ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", null)
-                        .WithOne()
-                        .HasForeignKey("OnlineSchoolForKids.Core.Entities.Comment", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

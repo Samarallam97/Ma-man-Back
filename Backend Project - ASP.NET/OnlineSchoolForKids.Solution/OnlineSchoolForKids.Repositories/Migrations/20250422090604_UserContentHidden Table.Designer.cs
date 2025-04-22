@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineSchoolForKids.Repositories;
 
@@ -11,9 +12,11 @@ using OnlineSchoolForKids.Repositories;
 namespace OnlineSchoolForKids.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250422090604_UserContentHidden Table")]
+    partial class UserContentHiddenTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,41 +231,6 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories", (string)null);
-                });
-
-            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("ContentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContentId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Content", b =>
@@ -599,21 +567,6 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                         .WithOne()
                         .HasForeignKey("OnlineSchoolForKids.Core.Entities.Adult", "Id")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Comment", b =>
-                {
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.Content", null)
-                        .WithOne()
-                        .HasForeignKey("OnlineSchoolForKids.Core.Entities.Comment", "ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", null)
-                        .WithOne()
-                        .HasForeignKey("OnlineSchoolForKids.Core.Entities.Comment", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
