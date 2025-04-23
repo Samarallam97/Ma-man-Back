@@ -28,5 +28,6 @@ internal class ContentConfigurations : IEntityTypeConfiguration<Content>
 
 		builder.HasMany<User>().WithMany();
 
+		builder.HasMany<User>().WithMany();
 	}
 }

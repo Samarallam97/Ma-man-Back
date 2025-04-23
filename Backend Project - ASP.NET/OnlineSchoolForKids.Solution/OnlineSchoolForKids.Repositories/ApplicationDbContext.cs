@@ -10,6 +10,8 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
 	public DbSet<Category> Categories { get; set; }
 	public DbSet<Content> Content { get; set; }
 	public DbSet<Content> Comments { get; set; }
+	public DbSet<ToDo> ToDos { get; set; }
+	public DbSet<Diary> Diaries { get; set; }
 
 
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }

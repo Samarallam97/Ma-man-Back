@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineSchoolForKids.Repositories;
 
@@ -11,9 +12,11 @@ using OnlineSchoolForKids.Repositories;
 namespace OnlineSchoolForKids.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250423121212_ToDo & Diary Table")]
+    partial class ToDoDiaryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,21 +53,6 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ContentUser");
-                });
-
-            modelBuilder.Entity("ContentUser1", b =>
-                {
-                    b.Property<int>("Content1Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("User1Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Content1Id", "User1Id");
-
-                    b.HasIndex("User1Id");
-
-                    b.ToTable("ContentUser1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -299,9 +287,6 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AdminId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AverageRate")
                         .HasColumnType("int");
 
                     b.Property<int?>("CategoryId")
@@ -613,21 +598,6 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                     b.HasOne("OnlineSchoolForKids.Core.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ContentUser1", b =>
-                {
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.Content", null)
-                        .WithMany()
-                        .HasForeignKey("Content1Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("User1Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

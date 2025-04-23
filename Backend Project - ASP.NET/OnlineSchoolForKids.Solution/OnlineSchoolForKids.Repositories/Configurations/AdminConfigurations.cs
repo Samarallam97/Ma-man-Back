@@ -9,6 +9,8 @@ internal class AdminConfigurations : IEntityTypeConfiguration<Admin>
 
 		builder.HasKey(x => x.Id);
 
+		builder.Property(A => A.Salary).HasPrecision(8, 3);
+
 		builder.HasOne<User>()
 			   .WithOne()
 			   .HasForeignKey<Admin>(a => a.Id)

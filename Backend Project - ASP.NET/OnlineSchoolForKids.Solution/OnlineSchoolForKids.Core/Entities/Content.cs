@@ -16,4 +16,6 @@ public class Content : BaseEntity
 	public int? CategoryId { get; set; }
 	public int? AdminId { get; set; }
 	public DateTime CreatedAt { get; set; }
+	public int AverageRate { get; set; }
+
 }

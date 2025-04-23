@@ -10319,7 +10319,7 @@ a:focus {
   color: #858796;
 }
 
-.sidebar {
+/* .sidebar {
   width: 6.5rem;
   min-height: 100vh;
 }
@@ -11278,4 +11278,4 @@ footer.sticky-footer .copyright {
 
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
-}
+} */
