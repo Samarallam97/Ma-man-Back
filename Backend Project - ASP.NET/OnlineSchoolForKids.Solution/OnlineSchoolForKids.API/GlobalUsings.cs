@@ -10,5 +10,9 @@ global using OnlineSchoolForKids.Repositories;
 global using OnlineSchoolForKids.Repositories.DataSeeding;
 global using OnlineSchoolForKids.API.Extensions;
 global using OnlineSchoolForKids.Core.Services.Interfaces;
+global using OnlineSchoolForKids.API.Errors;
+global using System.Net;
+global using System.Text.Json;
+global using OnlineSchoolForKids.API.Middlewares;
 
 

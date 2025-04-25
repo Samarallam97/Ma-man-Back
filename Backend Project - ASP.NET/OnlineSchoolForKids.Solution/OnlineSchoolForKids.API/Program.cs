@@ -6,7 +6,6 @@ public class Program
 	{
 		var builder = WebApplication.CreateBuilder(args);
 
-
 		#region DI Services Container
 
 		builder.Services.AddControllers();
@@ -23,7 +22,39 @@ public class Program
 
 		builder.Services.AddIdentityServicesToContainer(builder.Configuration);
 
-		builder.Services.AddSwaggerGen(); 
+		#region Cors Policy
+		builder.Services.AddCors(options =>
+		{
+			options.AddPolicy("MyPolicy", options =>
+			{
+				options.AllowAnyHeader().AllowAnyMethod().WithOrigins(builder.Configuration["FrontBaseUrl"]!);
+			});
+		}); 
+		#endregion
+
+		#region Validation Error Handling
+
+		builder.Services.Configure<ApiBehaviorOptions>(options =>
+		{
+			options.InvalidModelStateResponseFactory = (actionContext) =>
+			{
+				var errors = actionContext.ModelState.Where(p => p.Value?.Errors.Count() > 0)
+													.SelectMany(p => p.Value?.Errors!)
+													.Select(e => e.ErrorMessage)
+													.ToArray();
+
+				var validationErrorResponse = new ValidationErrorResponse()
+				{
+					Errors = errors
+				};
+
+				return new BadRequestObjectResult(validationErrorResponse);
+			};
+		});
+		
+		#endregion
+
+		builder.Services.AddSwaggerGen();
 		#endregion
 
 		var app = builder.Build();
@@ -54,6 +85,12 @@ public class Program
 
 		#region MiddleWares
 
+		#region Exception Handling
+
+		app.UseMiddleware<ExceptionHandlingMiddleWare>(); 
+
+		#endregion
+
 		if (app.Environment.IsDevelopment())
 		{
 			app.UseSwagger();
@@ -62,10 +99,23 @@ public class Program
 
 		app.UseHttpsRedirection();
 
+		#region Not Found EndPoint Handling
+
+		app.UseStatusCodePagesWithReExecute("/error/{0}");
+
+		#endregion
+
+		#region Cors Policy
+
+		app.UseCors("MyPolicy"); 
+
+		#endregion
+
 		app.UseAuthentication();
 		app.UseAuthorization();
 
 		app.MapControllers(); 
+
 		#endregion
 
 		app.Run();
