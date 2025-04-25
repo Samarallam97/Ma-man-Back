@@ -14,5 +14,7 @@ global using OnlineSchoolForKids.API.Errors;
 global using System.Net;
 global using System.Text.Json;
 global using OnlineSchoolForKids.API.Middlewares;
+global using Microsoft.AspNetCore.Mvc.Filters;
+global using OnlineSchoolForKids.Services;
 
 

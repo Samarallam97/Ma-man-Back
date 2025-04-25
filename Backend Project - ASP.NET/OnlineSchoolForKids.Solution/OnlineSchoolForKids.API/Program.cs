@@ -1,3 +1,6 @@
+using OnlineSchoolForKids.API.Extensions;
+using StackExchange.Redis;
+
 namespace OnlineSchoolForKids.API;
 
 public class Program
@@ -18,9 +21,17 @@ public class Program
 		{
 			options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 		});
+
+		// Redis
+		builder.Services.AddSingleton<IConnectionMultiplexer>(provider =>
+		{
+			var connectionString = builder.Configuration.GetConnectionString("Redis");
+			return ConnectionMultiplexer.Connect(connectionString !);
+		});
 		#endregion
 
 		builder.Services.AddIdentityServicesToContainer(builder.Configuration);
+		builder.Services.AddApplicationServices();
 
 		#region Cors Policy
 		builder.Services.AddCors(options =>

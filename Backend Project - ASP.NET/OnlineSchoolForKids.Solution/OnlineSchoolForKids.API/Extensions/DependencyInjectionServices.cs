@@ -1,6 +1,4 @@
-﻿using OnlineSchoolForKids.Services;
-
-namespace OnlineSchoolForKids.API.Extensions;
+﻿namespace OnlineSchoolForKids.API.Extensions;
 
 public static class DependencyInjectionServices
 {
@@ -49,6 +47,13 @@ public static class DependencyInjectionServices
 		});
 
 		Services.AddScoped(typeof(IAuthenticationService) , typeof(AuthenticationService));
+
+		return Services;
+	}
+
+	public static IServiceCollection AddApplicationServices(this IServiceCollection Services)
+	{
+		Services.AddSingleton(typeof(ICacheService), typeof(CacheService));
 
 		return Services;
 	}
