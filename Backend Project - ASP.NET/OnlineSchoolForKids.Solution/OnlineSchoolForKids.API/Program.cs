@@ -1,6 +1,3 @@
-using OnlineSchoolForKids.API.Extensions;
-using StackExchange.Redis;
-
 namespace OnlineSchoolForKids.API;
 
 public class Program

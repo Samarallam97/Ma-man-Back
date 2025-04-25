@@ -4,6 +4,8 @@ global using System.Reflection;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using System.Text.Json;
 global using OnlineSchoolForKids.Core.Entities;
-
-
-
+global using OnlineSchoolForKids.Core.Repositories.Interfaces;
+global using OnlineSchoolForKids.Core.Specifications;
+global using OnlineSchoolForKids.Core;
+global using OnlineSchoolForKids.Repositories.Repositories;
+global using System.Collections;

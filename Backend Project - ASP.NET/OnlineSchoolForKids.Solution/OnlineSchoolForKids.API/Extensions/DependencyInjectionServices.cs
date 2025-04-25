@@ -1,4 +1,7 @@
-﻿namespace OnlineSchoolForKids.API.Extensions;
+﻿
+using Role = OnlineSchoolForKids.Core.Entities.Role;
+
+namespace OnlineSchoolForKids.API.Extensions;
 
 public static class DependencyInjectionServices
 {
@@ -54,6 +57,7 @@ public static class DependencyInjectionServices
 	public static IServiceCollection AddApplicationServices(this IServiceCollection Services)
 	{
 		Services.AddSingleton(typeof(ICacheService), typeof(CacheService));
+		Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 
 		return Services;
 	}

@@ -16,5 +16,5 @@ global using System.Text.Json;
 global using OnlineSchoolForKids.API.Middlewares;
 global using Microsoft.AspNetCore.Mvc.Filters;
 global using OnlineSchoolForKids.Services;
-
-
+global using OnlineSchoolForKids.Core;
+global using StackExchange.Redis;

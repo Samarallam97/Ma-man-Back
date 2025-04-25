@@ -1,4 +1,6 @@
-﻿namespace OnlineSchoolForKids.API.Controllers;
+﻿using Role = OnlineSchoolForKids.Core.Entities.Role;
+
+namespace OnlineSchoolForKids.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
