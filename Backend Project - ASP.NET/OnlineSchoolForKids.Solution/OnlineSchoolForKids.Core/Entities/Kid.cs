@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnlineSchoolForKids.Core.Entities;
+﻿namespace OnlineSchoolForKids.Core.Entities;
 
 public class Kid : BaseEntity
 {

@@ -9,11 +9,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 		_context = context;
 	}
 
-	public async Task Add(T entity)
+	 public async Task AddAsync(T entity)
 	{
 		 await _context.Set<T>().AddAsync(entity);
 	}
-	public void Update(T entity)
+	 public void Update(T entity)
 	{
 		_context.Set<T>().Update(entity);
 	}

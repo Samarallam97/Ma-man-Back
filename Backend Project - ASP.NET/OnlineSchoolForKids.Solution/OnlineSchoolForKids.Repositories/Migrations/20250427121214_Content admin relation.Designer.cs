@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineSchoolForKids.Repositories;
 
@@ -11,9 +12,11 @@ using OnlineSchoolForKids.Repositories;
 namespace OnlineSchoolForKids.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250427121214_Content admin relation")]
+    partial class Contentadminrelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -334,9 +337,13 @@ namespace OnlineSchoolForKids.Repositories.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CategoryId")
+                        .IsUnique()
+                        .HasFilter("[CategoryId] IS NOT NULL");
 
-                    b.HasIndex("FormatId");
+                    b.HasIndex("FormatId")
+                        .IsUnique()
+                        .HasFilter("[FormatId] IS NOT NULL");
 
                     b.ToTable("Content", (string)null);
                 });
@@ -723,13 +730,13 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("OnlineSchoolForKids.Core.Entities.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .WithOne()
+                        .HasForeignKey("OnlineSchoolForKids.Core.Entities.Content", "CategoryId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("OnlineSchoolForKids.Core.Entities.Format", null)
-                        .WithMany()
-                        .HasForeignKey("FormatId")
+                        .WithOne()
+                        .HasForeignKey("OnlineSchoolForKids.Core.Entities.Content", "FormatId")
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 

@@ -3,4 +3,5 @@
 public class AgeGroup : BaseEntity
 {
     public string Name { get; set; }
+
 }

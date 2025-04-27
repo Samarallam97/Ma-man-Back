@@ -13,7 +13,6 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
 	public DbSet<ToDo> ToDos { get; set; }
 	public DbSet<Diary> Diaries { get; set; }
 
-
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder builder)

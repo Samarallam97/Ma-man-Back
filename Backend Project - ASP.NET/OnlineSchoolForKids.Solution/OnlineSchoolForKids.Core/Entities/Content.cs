@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace OnlineSchoolForKids.Core.Entities;
 
 public class Content : BaseEntity
@@ -17,5 +12,4 @@ public class Content : BaseEntity
 	public int? AdminId { get; set; }
 	public DateTime CreatedAt { get; set; }
 	public int AverageRate { get; set; }
-
 }

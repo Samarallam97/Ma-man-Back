@@ -2,8 +2,8 @@
 
 public interface IGenericRepository<T> where T : BaseEntity
 {
-	Task Add(T entity);
-	void Update(T entity);
+	Task AddAsync(T entity);
+	 void Update(T entity);
 	void Delete(T entity);
 
 	Task<T?> GetByIdAsync(int id);

@@ -1,4 +1,5 @@
 ﻿
+using OnlineSchoolForKids.API.Helpers;
 using Role = OnlineSchoolForKids.Core.Entities.Role;
 
 namespace OnlineSchoolForKids.API.Extensions;
@@ -58,6 +59,8 @@ public static class DependencyInjectionServices
 	{
 		Services.AddSingleton(typeof(ICacheService), typeof(CacheService));
 		Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+
+		Services.AddAutoMapper(m => m.AddProfile(typeof(MappingProfiles)));
 
 		return Services;
 	}

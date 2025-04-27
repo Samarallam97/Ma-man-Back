@@ -12,16 +12,16 @@ internal class ContentConfigurations : IEntityTypeConfiguration<Content>
 
 		builder.Property(C => C.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
-		builder.HasOne<Category>().WithOne()
-			    .HasForeignKey<Content>(C => C.CategoryId)
+		builder.HasOne<Category>().WithMany()
+			    .HasForeignKey(C => C.CategoryId)
 				.OnDelete(DeleteBehavior.SetNull);
 
-		builder.HasOne<Format>().WithOne()
-			   .HasForeignKey<Content>(C => C.FormatId)
+		builder.HasOne<Format>().WithMany()
+			   .HasForeignKey(C => C.FormatId)
 			   .OnDelete(DeleteBehavior.SetNull);
 
-		builder.HasOne<Admin>().WithOne()
-			   .HasForeignKey<Content>(C => C.AdminId)
+		builder.HasOne<Admin>().WithMany()
+			   .HasForeignKey(C => C.AdminId)
 			   .OnDelete(DeleteBehavior.SetNull);
 
 		builder.HasMany<AgeGroup>().WithMany();

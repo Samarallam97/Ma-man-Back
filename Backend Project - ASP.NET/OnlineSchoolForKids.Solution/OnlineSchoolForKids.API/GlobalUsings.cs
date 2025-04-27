@@ -18,3 +18,6 @@ global using Microsoft.AspNetCore.Mvc.Filters;
 global using OnlineSchoolForKids.Services;
 global using OnlineSchoolForKids.Core;
 global using StackExchange.Redis;
+global using System.ComponentModel.DataAnnotations;
+global using OnlineSchoolForKids.Core.Specifications;
+global using AutoMapper;
