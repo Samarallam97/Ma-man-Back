@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Add New Kid</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #d3d3d3;
+    }
+    /* الشريط العلوي */
+    .top-bar {
+      background-color: #8e44ad;
+      padding: 10px 20px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .top-title {
+      font-size: 1.7rem;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+    }
+    .top-icons {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    /* ستايل الفورم */
+    .form-section {
+      background-color: #e0e0e0;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      border: 2px solid #8e44ad;
+    }
+    label {
+      font-weight: bold;
+    }
+    .section-title {
+      text-align: center;
+      font-weight: bold;
+      color: gray;
+      margin-bottom: 15px;
+    }
+    /* زر الإضافة */
+    .add-btn {
+      background-color: #8e44ad;
+      color: white;
+      border: none;
+      padding: 10px 30px;
+      border-radius: 30px;
+      font-size: 18px;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- الشريط العلوي -->
+  <div class="top-bar">
+    <div class="menu-icon">
+      <i class="bi bi-list"></i>
+    </div>
+    <div class="top-title">
+      <i class="bi bi-people-fill"></i> Kids
+    </div>
+    <div class="top-icons">
+      <i class="bi bi-bell"></i>
+      <i class="bi bi-house-door"></i>
+      <i class="bi bi-moon"></i>
+      <i class="bi bi-person"></i>
+    </div>
+  </div>
+
+  <!-- عنوان الصفحة -->
+  <div class="container my-4">
+    <h2 class="fw-bold">Add a new kid</h2>
+
+    <!-- فورم البيانات -->
+    <div class="form-section">
+      <div class="section-title">Data</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label>First name:</label>
+          <input type="text" class="form-control" placeholder="Enter Name">
+        </div>
+        <div class="col-md-6">
+          <label>Second name:</label>
+          <input type="text" class="form-control" placeholder="Enter Name">
+        </div>
+        <div class="col-md-6">
+          <label>Age:</label>
+          <input type="text" class="form-control" placeholder="select">
+        </div>
+        <div class="col-md-6">
+          <label>Profile URL:</label>
+          <input type="text" class="form-control" placeholder="URL">
+        </div>
+      </div>
+    </div>
+
+    <!-- فورم التحكم -->
+    <div class="form-section">
+      <div class="section-title">Control</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label>Categories:</label>
+          <input type="text" class="form-control" placeholder="select">
+        </div>
+        <div class="col-md-6">
+          <label>Set time:</label>
+          <input type="text" class="form-control" placeholder="select">
+        </div>
+        <div class="col-md-6">
+          <label>Languages:</label>
+          <input type="text" class="form-control" placeholder="select">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- زر إضافة طفل -->
+  <button class="add-btn">Add</button>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
