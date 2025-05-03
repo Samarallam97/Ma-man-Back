@@ -1,0 +1,43 @@
+[
+    {
+      "Name": "Artificial Intelligence",
+      "Description": "Resources related to AI, machine learning, and deep learning."
+    },
+    {
+      "Name": "Web Development",
+      "Description": "Tutorials and articles on HTML, CSS, JavaScript, and frameworks."
+    },
+    {
+      "Name": "Databases",
+      "Description": "Guides and references for SQL, NoSQL, and database management."
+    },
+    {
+      "Name": "Programming Languages",
+      "Description": "Resources about C#, Java, Python, and other programming languages."
+    },
+    {
+      "Name": "Cloud Computing",
+      "Description": "Content on cloud services like AWS, Azure, and Google Cloud."
+    },
+    {
+      "Name": "Cybersecurity",
+      "Description": "Tips and information about securing systems and data."
+    },
+    {
+      "Name": "Version Control",
+      "Description": "Resources about Git, GitHub, GitLab, and version control best practices."
+    },
+    {
+      "Name": "Blockchain",
+      "Description": "Introduction and advanced topics related to blockchain technology."
+    },
+    {
+      "Name": "Software Engineering",
+      "Description": "Software development methodologies, design patterns, and best practices."
+    },
+    {
+      "Name": "DevOps",
+      "Description": "Articles and tutorials on CI/CD, Docker, Kubernetes, and automation."
+    }
+  ]
+  

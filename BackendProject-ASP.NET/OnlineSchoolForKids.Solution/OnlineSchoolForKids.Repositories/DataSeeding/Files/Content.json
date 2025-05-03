@@ -1,0 +1,122 @@
+[
+  {
+    "Title": "Introduction to AI",
+    "Description": "A beginner-friendly guide to understanding Artificial Intelligence.",
+    "URL": "https://example.com/ai-introduction",
+    "FormatId": 3,
+    "CategoryId": 3,
+    "AdminId": 1,
+    "CreatedAt": "2025-04-27T10:00:00",
+    "AverageRate": 4
+  },
+  {
+    "Title": "Basics of Web Development",
+    "Description": "Learn the fundamentals of HTML, CSS, and JavaScript.",
+    "URL": "https://example.com/web-development-basics",
+    "FormatId": 3,
+    "CategoryId": 4,
+    "AdminId": 2,
+    "CreatedAt": "2025-04-20T14:30:00",
+    "AverageRate": 5
+  },
+  {
+    "Title": "Understanding Databases",
+    "Description": "An introduction to relational databases and SQL.",
+    "URL": "https://example.com/databases-overview",
+    "FormatId": 4,
+    "CategoryId": 5,
+    "AdminId": 3,
+    "CreatedAt": "2025-04-15T09:15:00",
+    "AverageRate": 3
+  },
+  {
+    "Title": "Advanced C# Programming",
+    "Description": "Dive deep into C# advanced concepts like async programming and LINQ.",
+    "URL": "https://example.com/advanced-csharp",
+    "FormatId": 4,
+    "CategoryId": 6,
+    "AdminId": 4,
+    "CreatedAt": "2025-04-10T16:00:00",
+    "AverageRate": 5
+  },
+  {
+    "Title": "Cloud Computing Essentials",
+    "Description": "Basics of cloud technologies including AWS, Azure, and Google Cloud.",
+    "URL": "https://example.com/cloud-essentials",
+    "FormatId": 3,
+    "CategoryId": 7,
+    "AdminId": 5,
+    "CreatedAt": "2025-04-08T11:45:00",
+    "AverageRate": 4
+  },
+  {
+    "Title": "Machine Learning 101",
+    "Description": "An introduction to Machine Learning concepts and algorithms.",
+    "URL": "https://example.com/machine-learning-101",
+    "FormatId": 5,
+    "CategoryId": 3,
+    "AdminId": 6,
+    "CreatedAt": "2025-03-30T13:20:00",
+    "AverageRate": 5
+  },
+  {
+    "Title": "Introduction to Cybersecurity",
+    "Description": "Protect yourself and your data by understanding cybersecurity basics.",
+    "URL": "https://example.com/cybersecurity-intro",
+    "FormatId": 4,
+    "CategoryId": 8,
+    "AdminId": 7,
+    "CreatedAt": "2025-03-25T15:10:00",
+    "AverageRate": 4
+  },
+  {
+    "Title": "Frontend Frameworks Overview",
+    "Description": "Comparison between React, Angular, and Vue.js.",
+    "URL": "https://example.com/frontend-frameworks",
+    "FormatId": 3,
+    "CategoryId": 4,
+    "AdminId": 1,
+    "CreatedAt": "2025-03-22T10:05:00",
+    "AverageRate": 5
+  },
+  {
+    "Title": "Building APIs with ASP.NET Core",
+    "Description": "Step-by-step guide to building RESTful APIs using ASP.NET Core.",
+    "URL": "https://example.com/aspnet-core-apis",
+    "FormatId": 7,
+    "CategoryId": 6,
+    "AdminId": 2,
+    "CreatedAt": "2025-03-18T08:50:00",
+    "AverageRate": 5
+  },
+  {
+    "Title": "Version Control with Git and GitHub",
+    "Description": "Master Git commands and collaborate using GitHub repositories.",
+    "URL": "https://example.com/git-github-guide",
+    "FormatId": 3,
+    "CategoryId": 9,
+    "AdminId": 3,
+    "CreatedAt": "2025-03-12T17:30:00",
+    "AverageRate": 4
+  },
+  {
+    "Title": "Introduction to Blockchain",
+    "Description": "Learn the basics of blockchain technology and its applications.",
+    "URL": "https://example.com/blockchain-intro",
+    "FormatId": 4,
+    "CategoryId": 10,
+    "AdminId": 4,
+    "CreatedAt": "2025-03-10T12:15:00",
+    "AverageRate": 3
+  },
+  {
+    "Title": "Docker for Developers",
+    "Description": "Containerize your applications with Docker.",
+    "URL": "https://example.com/docker-for-developers",
+    "FormatId": 7,
+    "CategoryId": 7,
+    "AdminId": 5,
+    "CreatedAt": "2025-03-08T09:00:00",
+    "AverageRate": 5
+  }
+]

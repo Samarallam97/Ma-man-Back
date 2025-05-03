@@ -1,0 +1,37 @@
+[
+  {
+    "Id": 1,
+    "DateOfBirth": "1992-01-15T00:00:00",
+    "Points": 80
+  },
+  {
+    "Id": 2,
+    "DateOfBirth": "1988-06-22T00:00:00",
+    "Points": 95
+  },
+  {
+    "Id": 3,
+    "DateOfBirth": "1996-12-03T00:00:00",
+    "Points": 110
+  },
+  {
+    "Id": 4,
+    "DateOfBirth": "2000-08-11T00:00:00",
+    "Points": 120
+  },
+  {
+    "Id": 5,
+    "DateOfBirth": "1994-05-27T00:00:00",
+    "Points": 130
+  },
+  {
+    "Id": 6,
+    "DateOfBirth": "1990-11-17T00:00:00",
+    "Points": 140
+  },
+  {
+    "Id": 7,
+    "DateOfBirth": "1985-03-04T00:00:00",
+    "Points": 150
+  }
+]

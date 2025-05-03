@@ -1,0 +1,18 @@
+[
+  {
+    "Id": 21,
+    "DateOfBirth": "1995-02-14T00:00:00",
+    "TimeLimitWithMinutes": 30,
+    "Points": 100,
+    "ParentId": 2,
+    "AgeGroupId": 1
+  },
+  {
+    "Id": 20,
+    "DateOfBirth": "1989-07-09T00:00:00",
+    "TimeLimitWithMinutes": 45,
+    "Points": 110,
+    "ParentId": 3,
+    "AgeGroupId": 1
+  }
+]
