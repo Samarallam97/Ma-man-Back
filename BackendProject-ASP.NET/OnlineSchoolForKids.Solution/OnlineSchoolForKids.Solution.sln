@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineSchoolForKids.API", "OnlineSchoolForKids.API\OnlineSchoolForKids.API.csproj", "{7948F048-508E-432E-839C-BD69B01F9C9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineSchoolForKids.API", "OnlineSchoolForKids.API\OnlineSchoolForKids.API.csproj", "{7948F048-508E-432E-839C-BD69B01F9C9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineSchoolForKids.Services", "OnlineSchoolForKids.Services\OnlineSchoolForKids.Services.csproj", "{C92ABA93-75CB-4F37-81C5-FFAF9777F77E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineSchoolForKids.Services", "OnlineSchoolForKids.Services\OnlineSchoolForKids.Services.csproj", "{C92ABA93-75CB-4F37-81C5-FFAF9777F77E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineSchoolForKids.Repositories", "OnlineSchoolForKids.Repositories\OnlineSchoolForKids.Repositories.csproj", "{5C9A85D1-B976-4AEA-AC6F-EF3A26E7F22D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineSchoolForKids.Repositories", "OnlineSchoolForKids.Repositories\OnlineSchoolForKids.Repositories.csproj", "{5C9A85D1-B976-4AEA-AC6F-EF3A26E7F22D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineSchoolForKids.Core", "OnlineSchoolForKids.Core\OnlineSchoolForKids.Core.csproj", "{E86D84B0-4F48-4BA3-AB1D-D43C81131F40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineSchoolForKids.Core", "OnlineSchoolForKids.Core\OnlineSchoolForKids.Core.csproj", "{E86D84B0-4F48-4BA3-AB1D-D43C81131F40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

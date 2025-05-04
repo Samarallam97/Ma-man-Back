@@ -10,7 +10,7 @@ internal class ParentConfigurations : IEntityTypeConfiguration<Parent>
 
         builder.HasKey(P => P.Id);
 
-		builder.HasOne<User>()
+		builder.HasOne(p => p.User)
 						   .WithOne()
 						   .HasForeignKey<Parent>(p => p.Id)
 						   .OnDelete(DeleteBehavior.NoAction);

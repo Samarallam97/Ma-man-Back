@@ -11,7 +11,7 @@ internal class AdminConfigurations : IEntityTypeConfiguration<Admin>
 
 		builder.Property(A => A.Salary).HasPrecision(8, 3);
 
-		builder.HasOne<User>()
+		builder.HasOne(a => a.User)
 			   .WithOne()
 			   .HasForeignKey<Admin>(a => a.Id)
 			   .OnDelete(DeleteBehavior.NoAction);

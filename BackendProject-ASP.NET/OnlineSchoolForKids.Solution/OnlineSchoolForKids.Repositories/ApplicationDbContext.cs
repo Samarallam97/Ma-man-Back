@@ -12,6 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
 	public DbSet<Content> Comments { get; set; }
 	public DbSet<ToDo> ToDos { get; set; }
 	public DbSet<Diary> Diaries { get; set; }
+	public DbSet<UserContentRating> UserContentRatings { get; set; }
 
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 

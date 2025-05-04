@@ -12,8 +12,8 @@ using OnlineSchoolForKids.Repositories;
 namespace OnlineSchoolForKids.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250423121212_ToDo & Diary Table")]
-    partial class ToDoDiaryTable
+    [Migration("20250504174805_database init")]
+    partial class databaseinit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,32 +27,17 @@ namespace OnlineSchoolForKids.Repositories.Migrations
 
             modelBuilder.Entity("AgeGroupContent", b =>
                 {
-                    b.Property<int>("AgeGroupId")
+                    b.Property<int>("AgeGroupsId")
                         .HasColumnType("int");
 
                     b.Property<int>("ContentId")
                         .HasColumnType("int");
 
-                    b.HasKey("AgeGroupId", "ContentId");
+                    b.HasKey("AgeGroupsId", "ContentId");
 
                     b.HasIndex("ContentId");
 
                     b.ToTable("AgeGroupContent");
-                });
-
-            modelBuilder.Entity("ContentUser", b =>
-                {
-                    b.Property<int>("ContentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ContentId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ContentUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -289,6 +274,9 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                     b.Property<int?>("AdminId")
                         .HasColumnType("int");
 
+                    b.Property<int>("AverageRate")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
@@ -302,7 +290,7 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int?>("FormatId")
+                    b.Property<int>("FormatId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -317,17 +305,11 @@ namespace OnlineSchoolForKids.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdminId")
-                        .IsUnique()
-                        .HasFilter("[AdminId] IS NOT NULL");
+                    b.HasIndex("AdminId");
 
-                    b.HasIndex("CategoryId")
-                        .IsUnique()
-                        .HasFilter("[CategoryId] IS NOT NULL");
+                    b.HasIndex("CategoryId");
 
-                    b.HasIndex("FormatId")
-                        .IsUnique()
-                        .HasFilter("[FormatId] IS NOT NULL");
+                    b.HasIndex("FormatId");
 
                     b.ToTable("Content", (string)null);
                 });
@@ -572,32 +554,55 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.UserContentHidden", b =>
+                {
+                    b.Property<int>("ContentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ContentId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserContentHidden");
+                });
+
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.UserContentRating", b =>
+                {
+                    b.Property<int>("ContentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RatingDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("Stars")
+                        .HasColumnType("int");
+
+                    b.HasKey("ContentId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserContentRatings");
+                });
+
             modelBuilder.Entity("AgeGroupContent", b =>
                 {
                     b.HasOne("OnlineSchoolForKids.Core.Entities.AgeGroup", null)
                         .WithMany()
-                        .HasForeignKey("AgeGroupId")
+                        .HasForeignKey("AgeGroupsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("OnlineSchoolForKids.Core.Entities.Content", null)
                         .WithMany()
                         .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ContentUser", b =>
-                {
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.Content", null)
-                        .WithMany()
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -655,25 +660,31 @@ namespace OnlineSchoolForKids.Repositories.Migrations
 
             modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Admin", b =>
                 {
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", null)
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", "User")
                         .WithOne()
                         .HasForeignKey("OnlineSchoolForKids.Core.Entities.Admin", "Id")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Adult", b =>
                 {
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.AgeGroup", null)
-                        .WithMany()
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.AgeGroup", "AgeGroup")
+                        .WithMany("Adults")
                         .HasForeignKey("AgeGroupId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", null)
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", "User")
                         .WithOne()
                         .HasForeignKey("OnlineSchoolForKids.Core.Entities.Adult", "Id")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("AgeGroup");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Comment", b =>
@@ -693,20 +704,27 @@ namespace OnlineSchoolForKids.Repositories.Migrations
 
             modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Content", b =>
                 {
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.Admin", null)
-                        .WithOne()
-                        .HasForeignKey("OnlineSchoolForKids.Core.Entities.Content", "AdminId")
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.Admin", "Admin")
+                        .WithMany("Contents")
+                        .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.Category", null)
-                        .WithOne()
-                        .HasForeignKey("OnlineSchoolForKids.Core.Entities.Content", "CategoryId")
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.Category", "Category")
+                        .WithMany("Contents")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.Format", null)
-                        .WithOne()
-                        .HasForeignKey("OnlineSchoolForKids.Core.Entities.Content", "FormatId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.Format", "Format")
+                        .WithMany("Contents")
+                        .HasForeignKey("FormatId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Format");
                 });
 
             modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Diary", b =>
@@ -720,31 +738,39 @@ namespace OnlineSchoolForKids.Repositories.Migrations
 
             modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Kid", b =>
                 {
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.AgeGroup", null)
-                        .WithMany()
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.AgeGroup", "AgeGroup")
+                        .WithMany("Kids")
                         .HasForeignKey("AgeGroupId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", null)
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", "User")
                         .WithOne()
                         .HasForeignKey("OnlineSchoolForKids.Core.Entities.Kid", "Id")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.Parent", null)
-                        .WithMany()
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.Parent", "Parent")
+                        .WithMany("Kids")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AgeGroup");
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Parent", b =>
                 {
-                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", null)
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", "User")
                         .WithOne()
                         .HasForeignKey("OnlineSchoolForKids.Core.Entities.Parent", "Id")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.ToDo", b =>
@@ -754,6 +780,85 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                         .HasForeignKey("OnlineSchoolForKids.Core.Entities.ToDo", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.UserContentHidden", b =>
+                {
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.Content", "Content")
+                        .WithMany("UsersHidden")
+                        .HasForeignKey("ContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", "User")
+                        .WithMany("ContentsHidden")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Content");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.UserContentRating", b =>
+                {
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.Content", "Content")
+                        .WithMany("UsersRated")
+                        .HasForeignKey("ContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineSchoolForKids.Core.Entities.User", "User")
+                        .WithMany("ContentsRated")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Content");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Admin", b =>
+                {
+                    b.Navigation("Contents");
+                });
+
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.AgeGroup", b =>
+                {
+                    b.Navigation("Adults");
+
+                    b.Navigation("Kids");
+                });
+
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Category", b =>
+                {
+                    b.Navigation("Contents");
+                });
+
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Content", b =>
+                {
+                    b.Navigation("UsersHidden");
+
+                    b.Navigation("UsersRated");
+                });
+
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Format", b =>
+                {
+                    b.Navigation("Contents");
+                });
+
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.Parent", b =>
+                {
+                    b.Navigation("Kids");
+                });
+
+            modelBuilder.Entity("OnlineSchoolForKids.Core.Entities.User", b =>
+                {
+                    b.Navigation("ContentsHidden");
+
+                    b.Navigation("ContentsRated");
                 });
 #pragma warning restore 612, 618
         }

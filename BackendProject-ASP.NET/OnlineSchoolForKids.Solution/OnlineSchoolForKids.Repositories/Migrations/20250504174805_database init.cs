@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OnlineSchoolForKids.Repositories.Migrations
 {
     /// <inheritdoc />
-    public partial class DatabaseInit : Migration
+    public partial class databaseinit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,6 +22,33 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AgeGroups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Formats",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Formats", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,6 +115,25 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Admins",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    HiringDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Salary = table.Column<double>(type: "float(8)", precision: 8, scale: 3, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Admins", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Admins_Users_Id",
+                        column: x => x.Id,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -202,6 +248,27 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Diaries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 10000, nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Diaries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Diaries_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Parents",
                 columns: table => new
                 {
@@ -217,6 +284,66 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                         column: x => x.Id,
                         principalTable: "Users",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ToDos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ToDos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ToDos_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Content",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    URL = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    AverageRate = table.Column<int>(type: "int", nullable: false),
+                    FormatId = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: true),
+                    AdminId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Content", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Content_Admins_AdminId",
+                        column: x => x.AdminId,
+                        principalTable: "Admins",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Content_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Content_Formats_FormatId",
+                        column: x => x.FormatId,
+                        principalTable: "Formats",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -252,10 +379,117 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "AgeGroupContent",
+                columns: table => new
+                {
+                    AgeGroupsId = table.Column<int>(type: "int", nullable: false),
+                    ContentId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AgeGroupContent", x => new { x.AgeGroupsId, x.ContentId });
+                    table.ForeignKey(
+                        name: "FK_AgeGroupContent_AgeGroups_AgeGroupsId",
+                        column: x => x.AgeGroupsId,
+                        principalTable: "AgeGroups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AgeGroupContent_Content_ContentId",
+                        column: x => x.ContentId,
+                        principalTable: "Content",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ContentId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_Content_ContentId",
+                        column: x => x.ContentId,
+                        principalTable: "Content",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comments_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserContentHidden",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ContentId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserContentHidden", x => new { x.ContentId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_UserContentHidden_Content_ContentId",
+                        column: x => x.ContentId,
+                        principalTable: "Content",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserContentHidden_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserContentRatings",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ContentId = table.Column<int>(type: "int", nullable: false),
+                    Stars = table.Column<int>(type: "int", nullable: false),
+                    RatingDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserContentRatings", x => new { x.ContentId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_UserContentRatings_Content_ContentId",
+                        column: x => x.ContentId,
+                        principalTable: "Content",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserContentRatings_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Adults_AgeGroupId",
                 table: "Adults",
                 column: "AgeGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AgeGroupContent_ContentId",
+                table: "AgeGroupContent",
+                column: "ContentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -278,6 +512,39 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_ContentId",
+                table: "Comments",
+                column: "ContentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UserId",
+                table: "Comments",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Content_AdminId",
+                table: "Content",
+                column: "AdminId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Content_CategoryId",
+                table: "Content",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Content_FormatId",
+                table: "Content",
+                column: "FormatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Diaries_UserId",
+                table: "Diaries",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Kids_AgeGroupId",
                 table: "Kids",
                 column: "AgeGroupId");
@@ -293,6 +560,22 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ToDos_UserId",
+                table: "ToDos",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserContentHidden_UserId",
+                table: "UserContentHidden",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserContentRatings_UserId",
+                table: "UserContentRatings",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -314,6 +597,9 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                 name: "Adults");
 
             migrationBuilder.DropTable(
+                name: "AgeGroupContent");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -329,7 +615,22 @@ namespace OnlineSchoolForKids.Repositories.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "Diaries");
+
+            migrationBuilder.DropTable(
                 name: "Kids");
+
+            migrationBuilder.DropTable(
+                name: "ToDos");
+
+            migrationBuilder.DropTable(
+                name: "UserContentHidden");
+
+            migrationBuilder.DropTable(
+                name: "UserContentRatings");
 
             migrationBuilder.DropTable(
                 name: "Roles");
@@ -339,6 +640,18 @@ namespace OnlineSchoolForKids.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "Parents");
+
+            migrationBuilder.DropTable(
+                name: "Content");
+
+            migrationBuilder.DropTable(
+                name: "Admins");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Formats");
 
             migrationBuilder.DropTable(
                 name: "Users");

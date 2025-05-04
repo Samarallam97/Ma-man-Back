@@ -10,20 +10,21 @@ namespace OnlineSchoolForKids.Repositories.Configurations
             builder.HasKey(K => K.Id);
 
 
-			builder.HasOne<User>().WithOne()
+			builder.HasOne(k => k.User)
+				   .WithOne()
 				   .HasForeignKey<Kid>(k => k.Id)
 				   .OnDelete(DeleteBehavior.NoAction);
 
-			builder.HasOne<Parent>()
-				   .WithMany()
+			builder.HasOne(k => k.Parent)
+				   .WithMany(p => p.Kids)
 				   .HasForeignKey(k => k.ParentId)
 				   .OnDelete(DeleteBehavior.Cascade);
 
 
-			builder.HasOne<AgeGroup>()
-							   .WithMany()
-							   .HasForeignKey(k => k.AgeGroupId)
-							   .OnDelete(DeleteBehavior.SetNull);
+			builder.HasOne(k => k.AgeGroup)
+					.WithMany(a => a.Kids)
+					.HasForeignKey(k => k.AgeGroupId)
+					.OnDelete(DeleteBehavior.SetNull);
 		}
     }
 }

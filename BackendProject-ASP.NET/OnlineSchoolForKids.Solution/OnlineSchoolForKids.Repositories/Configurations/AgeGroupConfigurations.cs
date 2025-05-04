@@ -9,5 +9,6 @@ internal class AgeGroupConfigurations : IEntityTypeConfiguration<AgeGroup>
         builder.ToTable("AgeGroups");
 
         builder.Property(A => A.Name).IsRequired().HasMaxLength(60);
-    }
+
+	}
 }

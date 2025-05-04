@@ -8,13 +8,13 @@ internal class AdultConfigurations : IEntityTypeConfiguration<Adult>
 
         builder.HasKey(A => A.Id);
 
-		builder.HasOne<User>()
+		builder.HasOne(a => a.User)
 						   .WithOne()
 						   .HasForeignKey<Adult>(a => a.Id)
 						   .OnDelete(DeleteBehavior.NoAction);
 
-		builder.HasOne<AgeGroup>()
-						   .WithMany()
+		builder.HasOne(a => a.AgeGroup)
+						   .WithMany(a => a.Adults)
 						   .HasForeignKey(a => a.AgeGroupId)
 						   .OnDelete(DeleteBehavior.SetNull);
 	}

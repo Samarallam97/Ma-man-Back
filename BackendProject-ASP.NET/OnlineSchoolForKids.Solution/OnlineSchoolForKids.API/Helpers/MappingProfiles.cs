@@ -5,5 +5,6 @@ public class MappingProfiles : Profile
     public MappingProfiles()
     {
         CreateMap<ContentDTO, Content>();
+        CreateMap<RegisterDTO, User>();
     }
 }
