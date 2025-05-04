@@ -40,13 +40,13 @@ namespace OnlineSchoolForKids.API.Controllers
             return BadRequest(new BaseErrorResponse(400));
         }
 
-        [HttpDelete]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteAgeGroup(int AgeGroupId)
         {
             var ageGroup = await _ageGroupRepo.GetByIdAsync(AgeGroupId);
 
             if (ageGroup is null)
-                return NotFound(new BaseErrorResponse(404, $"Content with Id {AgeGroupId} not found."));
+                return NotFound(new BaseErrorResponse(404, $"AgeGroup with Id {AgeGroupId} not found."));
 
             _ageGroupRepo.Delete(ageGroup);
 

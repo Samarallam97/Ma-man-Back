@@ -1,4 +1,5 @@
-﻿using OnlineSchoolForKids.Core.Repositories.Interfaces;
+﻿using System.Threading.Tasks;
+using OnlineSchoolForKids.Core.Repositories.Interfaces;
 
 namespace OnlineSchoolForKids.API.Controllers
 {
@@ -16,7 +17,7 @@ namespace OnlineSchoolForKids.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<FormatDTO>>> GetAllFormats()
+        public async Task<IActionResult> GetAllFormats()
         {
             var result = await _unitOfWork.Repository<Format>().GetAllAsync();
 
@@ -26,7 +27,7 @@ namespace OnlineSchoolForKids.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<FormatDTO>> AddFormat(FormatDTO formatDTO)
+        public async Task<IActionResult> AddFormat(FormatDTO formatDTO)
         {
             var format = new Format()
             {
@@ -36,37 +37,24 @@ namespace OnlineSchoolForKids.API.Controllers
             var result = await _unitOfWork.CompleteAsync();
 
             if (result > 0)
-            {      
-                var resultDTO = new FormatDTO
-                {
-                    Name = format.Name
-                };
-                return Ok(resultDTO);
-            }
+                return Ok(result);
             return BadRequest(new BaseErrorResponse(400));
         }
 
         [HttpDelete]
-        public async Task<ActionResult<FormatDTO>> DeleteFormat(int FormatId)
+        public async Task<IActionResult> DeleteFormat(int FormatId)
         {
             var format = await _formateRepo.GetByIdAsync(FormatId);
 
             if (format is null)
-                return NotFound(new BaseErrorResponse(404, $"Content with Id {FormatId} not found."));
+                return NotFound(new BaseErrorResponse(404, $"Format with Id {FormatId} not found."));
 
             _formateRepo.Delete(format);
 
             var result = await _unitOfWork.CompleteAsync();
 
             if (result > 0)
-            {
-                var resultDTO = new FormatDTO
-                {
-                    Name = format.Name
-                };
-                return Ok(resultDTO);
-            };
-
+                return Ok(result);
             return BadRequest(new BaseErrorResponse(400));
         }
     }
