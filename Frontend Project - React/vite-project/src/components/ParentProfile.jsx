@@ -168,4 +168,4 @@ const ParentProfile = () => {
   );
 }
 
-export default ParentProfile
+export default ParentProfile;
