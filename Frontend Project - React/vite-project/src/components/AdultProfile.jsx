@@ -21,7 +21,7 @@ const AdultProfile = () => {const [name, setName] = useState("");
     });
   };
   return (
-    <div>
+    <div className='adultbody'>
         <Helmet><title>My web page</title></Helmet>
        <div className="container rounded #682773">
         <div className="row">

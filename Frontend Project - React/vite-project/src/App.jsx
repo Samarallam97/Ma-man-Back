@@ -14,7 +14,8 @@ import Reminder from './components/Reminder.jsx';
 import Tasks from './components/Tasks.jsx';
 import Notifications from './components/Notifications.jsx';
 import Friends from './components/Friends.jsx';
-import CategoriesPage from './components/CategoriesPage.jsx';
+import Register from './components/Register.jsx'; 
+import Login from './components/Login.jsx'; 
 
 function App() {
   return (<>
@@ -25,8 +26,8 @@ function App() {
         <Route path="/add-new-kid"  element={<Addnewkid />} />
         <Route path="/error-404"  element={<Error404 />} />
         <Route path="/"  element={<Home />} />
-        <Route path="/categories_page"  element={<CategoriesPage />} />
-
+        <Route path="/register"  element={<Register />} />
+        <Route path="/login"  element={<Login />} />
         <Route path="/parentprofile" element={<ParentProfile/>} />
         <Route path="/Content_title" element={<Content_title/> } />
         <Route path="/AdultProfile" element={<AdultProfile/> } />
