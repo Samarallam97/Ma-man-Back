@@ -2,7 +2,9 @@ import React from 'react';
 import profileImage from '../assets/profile-img-1.webp';
 import { Link } from 'react-router-dom';
 import { Helmet  } from 'react-helmet-async';
-const ParentProfile = () => {
+const ParentProfile = () => {const handle=()=>{
+  return alert("you can not edit now")
+}
   return (
   <div>
     {/* <Helmet>
@@ -134,22 +136,24 @@ const ParentProfile = () => {
                   <h5 className="mb-3">About</h5>
                   <p className="lead mb-3">Ethan Leo is a seasoned and results-driven Project Manager who brings experience and expertise to project management. With a proven track record of successfully delivering complex projects on time and within budget, Ethan Leo is the go-to professional htmlFor organizations seeking efficient and effective project leadership.</p>
                   <div className="">
+                    <Link to="/aboutparent">
                     <button className="btn btn-outline-primary mb-3" type="button">Edit</button>
+                    </Link>
                   </div>
                   <h5 className="mb-3">About Sara</h5>
                   <p className="lead mb-3">Ethan Leo is a seasoned and results-driven Project Manager who brings experience and expertise to project management. With a proven track record of successfully delivering complex projects on time and within budget, Ethan Leo is the go-to professional htmlFor organizations seeking efficient and effective project leadership.</p>
                   <div className="">
-                    <button className="btn btn-outline-primary mb-3" type="button">Edit</button>
+                    <button onClick={handle} className="btn btn-outline-primary mb-3" type="button">Edit</button>
                   </div>
                   <h5 className="mb-3">About Sally</h5>
                   <p className="lead mb-3">Ethan Leo is a seasoned and results-driven Project Manager who brings experience and expertise to project management. With a proven track record of successfully delivering complex projects on time and within budget, Ethan Leo is the go-to professional htmlFor organizations seeking efficient and effective project leadership.</p>
                  <div className="">
-                    <button className="btn btn-outline-primary mb-3" type="button">Edit</button>
+                    <button onClick={handle}  className="btn btn-outline-primary mb-3" type="button">Edit</button>
                   </div>
                   <h5 className="mb-3">About Ali</h5>
                   <p className="lead mb-3">Ethan Leo is a seasoned and results-driven Project Manager who brings experience and expertise to project management. With a proven track record of successfully delivering complex projects on time and within budget, Ethan Leo is the go-to professional htmlFor organizations seeking efficient and effective project leadership.</p>
                   <div className="">
-                    <button className="btn btn-outline-primary mb-3" type="button">Edit</button>
+                    <button onClick={handle}  className="btn btn-outline-primary mb-3" type="button">Edit</button>
                   </div>
                 </div>
               </div>
