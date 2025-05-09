@@ -1,25 +1,32 @@
-﻿namespace OnlineSchoolForKids.Repositories;
-public class ApplicationDbContext : IdentityDbContext<User, Role, int>
+﻿using Module = OnlineSchoolForKids.Core.Entities.Module;
+
+namespace OnlineSchoolForKids.Repositories;
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
-    public DbSet<Parent> Parents { get; set; }
-    public DbSet<Kid> Kids { get; set; }
-    public DbSet<Adult> Adults { get; set; }
-	public DbSet<Admin> Admins { get; set; }
-	public DbSet<AgeGroup> AgeGroups { get; set; }
-	public DbSet<Format> Formats { get; set; }
+	public DbSet<RefreshToken> RefreshTokens { get; set; }
 	public DbSet<Category> Categories { get; set; }
-	public DbSet<Content> Content { get; set; }
-	public DbSet<Content> Comments { get; set; }
-	public DbSet<ToDo> ToDos { get; set; }
+	public DbSet<Module> Modules { get; set; }
+	public DbSet<Content> Contents { get; set; }
+	public DbSet<AgeGroup> AgeGroups { get; set; }
+	public DbSet<UserProgress> UserProgress { get; set; }
+	public DbSet<ContentProgress> ContentProgress { get; set; }
+	public DbSet<Notification> Notifications { get; set; }
+	public DbSet<HiddenModule> HiddenModules { get; set; }
+	public DbSet<Comment> Comments { get; set; }
+	public DbSet<Rating> Ratings { get; set; }
+	public DbSet<TODO> TODOs { get; set; }
 	public DbSet<Diary> Diaries { get; set; }
-	public DbSet<UserContentRating> UserContentRatings { get; set; }
 
-	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
+	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+	{
 
-        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-    }
+	}
+
+	protected override void OnModelCreating(ModelBuilder builder)
+	{
+		base.OnModelCreating(builder);
+
+		builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+	}
 }

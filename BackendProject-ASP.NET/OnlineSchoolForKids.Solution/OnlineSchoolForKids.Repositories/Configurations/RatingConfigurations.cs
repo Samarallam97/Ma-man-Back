@@ -8,13 +8,10 @@ using System.Threading.Tasks;
 
 namespace OnlineSchoolForKids.Repository.Configurations
 {
-	internal class CommentConfigurations : IEntityTypeConfiguration<Comment>
+	internal class RatingConfigurations : IEntityTypeConfiguration<Rating>
 	{
-		public void Configure(EntityTypeBuilder<Comment> builder)
+		public void Configure(EntityTypeBuilder<Rating> builder)
 		{
-
-			builder.Property(U => U.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
-
 			//builder.HasOne(c => c.Module)
 			//		.WithMany()
 			//		.HasForeignKey(c => c.ModuleId)

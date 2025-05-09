@@ -1,9 +1,17 @@
-﻿namespace OnlineSchoolForKids.Core.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class ToDo : BaseEntity
+namespace OnlineSchoolForKids.Core.Entities
 {
-    public string Content { get; set; }
-	public DateTime CreationDate { get; set; }
-	public bool Status { get; set; }
-    public int UserId { get; set; }
+	public class TODO : BaseEntity
+	{
+		public string Content { get; set; }
+		public DateTime CreationDate { get; set; } = DateTime.UtcNow;
+		public bool Status { get; set; }
+		public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
+    }
 }

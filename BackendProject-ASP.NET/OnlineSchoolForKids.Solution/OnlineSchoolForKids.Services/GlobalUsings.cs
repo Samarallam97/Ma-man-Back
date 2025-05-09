@@ -8,3 +8,6 @@ global using System.Security.Claims;
 global using System.Text;
 global using System.Text.Json;
 global using StackExchange.Redis;
+global using OnlineSchoolForKids.Core;
+global using OnlineSchoolForKids.Core.ServiceInterfaces;
+global using System.Security.Cryptography;

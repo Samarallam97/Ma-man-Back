@@ -1,31 +1,26 @@
-﻿namespace OnlineSchoolForKids.Repositories.Configurations;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-internal class ContentConfigurations : IEntityTypeConfiguration<Content>
+namespace OnlineSchoolForKids.Repository.Configurations
 {
-	public void Configure(EntityTypeBuilder<Content> builder)
+	internal class ContentConfigurations : IEntityTypeConfiguration<Content>
 	{
-		builder.ToTable("Content");
+		public void Configure(EntityTypeBuilder<Content> builder)
+		{
+			builder.HasOne(c => c.CreatedByAdmin)
+				.WithMany()
+				.HasForeignKey(c => c.CreatedByAdminId)
+				.OnDelete(DeleteBehavior.SetNull);
 
-		builder.Property(C => C.Title).IsRequired().HasMaxLength(60);
-		builder.Property(C => C.Description).IsRequired().HasMaxLength(1000);
-		builder.Property(C => C.URL).IsRequired().HasMaxLength(1000);
-
-		builder.Property(C => C.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
-
-		builder.HasOne(c => c.Category)
-			   .WithMany(c => c.Contents)
-			   .HasForeignKey(C => C.CategoryId)
-			   .OnDelete(DeleteBehavior.SetNull);
-
-		builder.HasOne(c => c.Format)
-			   .WithMany(f => f.Contents)
-			   .HasForeignKey(C => C.FormatId)
-			   .OnDelete(DeleteBehavior.Restrict);
-
-		builder.HasOne(c => c.Admin)
-			   .WithMany(a => a.Contents)
-			   .HasForeignKey(C => C.AdminId)
-			   .OnDelete(DeleteBehavior.SetNull);
-
+			//builder.HasOne(c => c.Module)
+			//		.WithMany()
+			//		.HasForeignKey(c => c.ModuleId)
+			//		.OnDelete(DeleteBehavior.Restrict);
+		}
 	}
 }

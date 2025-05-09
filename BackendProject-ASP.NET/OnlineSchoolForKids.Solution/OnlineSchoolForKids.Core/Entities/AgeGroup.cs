@@ -1,9 +1,15 @@
-﻿namespace OnlineSchoolForKids.Core.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OnlineSchoolForKids.Core.Entities;
 
 public class AgeGroup : BaseEntity
 {
-	public string Name { get; set; }
-	public ICollection<Content> Content { get; set; } = new HashSet<Content>();
-    public ICollection<Adult> Adults { get; set; } = new HashSet<Adult>();
-	public ICollection<Kid> Kids { get; set; } = new HashSet<Kid>();
+	public string Name { get; set; } // 3-5, 6-8, 8-10, 10-14, 14-18, parent, admin
+
+	public List<Content> Contents { get; set; }
+	public List<ApplicationUser> Users { get; set; }
 }

@@ -108,11 +108,11 @@ const Home = () => {
   };
 
   return (
-    <div style={styles.home}>
+    <div style={styles.home} >
       <nav style={styles.navbar}>
         <div style={styles.navContainer}>
           <a href="/" style={{ ...styles.navItem, fontSize: '1.2rem' }}>
-            📚 Kids Learning
+            📚 Ma'man
           </a>
 
           <button
@@ -140,9 +140,9 @@ const Home = () => {
         </div>
       </nav>
 
-      <div style={styles.hero}>
-        <h1 style={styles.h1}>Welcome to Kids Learning School</h1>
-        <p style={styles.p}>Fun and easy lessons for young learners!</p>
+      <div style={styles.hero} className="vh-100 d-flex flex-column justify-content-center align-items-center">
+        <h1 style={styles.h1}>Welcome to Ma'man </h1>
+        <p style={styles.p}>Online School for kids _Fun and easy lessons for young learners!_</p>
         <div>
           <Link to="/login" style={styles.btn}>Login</Link>
           <Link to="/register" style={{ ...styles.btn, ...styles.btnOutline }}>

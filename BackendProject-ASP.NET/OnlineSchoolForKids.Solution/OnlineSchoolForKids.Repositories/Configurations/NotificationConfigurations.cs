@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace OnlineSchoolForKids.Repository.Configurations
 {
-	internal class CategoryConfigurations : IEntityTypeConfiguration<Category>
+	internal class NotificationConfigurations : IEntityTypeConfiguration<Notification>
 	{
-		public void Configure(EntityTypeBuilder<Category> builder)
+		public void Configure(EntityTypeBuilder<Notification> builder)
 		{
-			builder.HasOne(c => c.CreatedByAdmin)
+			builder.HasOne(c => c.User)
 					.WithMany()
-					.HasForeignKey(c => c.CreatedByAdminId)
-					.OnDelete(DeleteBehavior.SetNull);
+					.HasForeignKey(c => c.UserId)
+					.OnDelete(DeleteBehavior.Cascade);
 		}
 	}
 }

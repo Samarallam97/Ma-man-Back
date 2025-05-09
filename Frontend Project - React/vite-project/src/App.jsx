@@ -13,10 +13,10 @@ import Achievements from './components/Achievements.jsx';
 import Reminder from './components/Reminder.jsx';
 import Tasks from './components/Tasks.jsx';
 import Notifications from './components/Notifications.jsx';
-import Friends from './components/Friends.jsx';
+import Friends from './components/Friends.jsx';``
 import Register from './components/Register.jsx'; 
 import Login from './components/Login.jsx'; 
-
+import AboutParent from './components/AboutParent.jsx';
 function App() {
   return (<>
   <HelmetProvider>
@@ -38,6 +38,7 @@ function App() {
         <Route path="/tasks" element={<Tasks/> } />
         <Route path="/notifications" element={<Notifications/> } />
         <Route path="/friends" element={<Friends/> } />
+        <Route path="/aboutparent" element={<AboutParent/> } />
 
       </Routes>
     </Router> 

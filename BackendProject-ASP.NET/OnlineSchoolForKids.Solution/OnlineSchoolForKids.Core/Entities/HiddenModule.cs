@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace OnlineSchoolForKids.Core.Entities
 {
-	public class Comment : BaseEntity
+	public class HiddenModule : BaseEntity
 	{
+		public string UserId { get; set; } // Parent or Adult
+		public ApplicationUser User { get; set; }
 		public string ModuleId { get; set; }
 		public Module Module { get; set; }
-		public string UserId { get; set; }
-		public ApplicationUser User { get; set; }
-		public string Text { get; set; }
-		public DateTime CreatedAt { get; set; }
 	}
 }
