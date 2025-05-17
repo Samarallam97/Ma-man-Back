@@ -1,72 +1,97 @@
-﻿using OnlineSchoolForKids.Core.Repositories.Interfaces; 
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using OnlineSchoolForKids.Core.Repositories.Interfaces;
 
-namespace OnlineSchoolForKids.API.Controllers;
-
-[Route("api/[controller]")]
-[ApiController]
-public class CategoryController : ControllerBase
+namespace OnlineSchoolForKids.API.Controllers
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-    IGenericRepository<Category> _categoryRepo;
-
-
-    public CategoryController(IUnitOfWork unitOfWork, IMapper mapper)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CategoryController : ControllerBase
     {
-        _unitOfWork = unitOfWork;
-        _categoryRepo = _unitOfWork.Repository<Category>();
-        _mapper = mapper;
-    }
+        private readonly IUnitOfWork _unitOfWork;
+        IGenericRepository<Category> _categoryRepo;
 
-    [HttpPost("add")]
-    public async Task<ActionResult<CategoryDTO>> AddCategory(CategoryDTO categoryDTO)
-    {
-       // var category = _mapper.Map<CategoryDTO, Category>(categoryDTO);
-
-        var category = new Category
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            Name = categoryDTO.Name,
-            Description = categoryDTO.Description
-        };
+            _unitOfWork = unitOfWork;
+            _categoryRepo = _unitOfWork.Repository<Category>();
+        }
 
-        await _categoryRepo.AddAsync(category);
-        var result = await _unitOfWork.CompleteAsync();
-
-        if (result > 0)
-            return Ok("Category Added Successfully");
-        return BadRequest(new BaseErrorResponse(400, "An ERROR Happened while save to DB"));
-
-
-    }
-
-    [HttpDelete("delete/{id}")]
-    public async Task<ActionResult<CategoryDTO>> DeleteCategory(int id)
-    {
-        var category = await _categoryRepo.GetByIdAsync(id);
-        if (category is null)
-            return NotFound(new BaseErrorResponse(404, $"Category with Id {id} not found."));
-
-        _categoryRepo.Delete(category);
-        var result = await _unitOfWork.CompleteAsync();
-
-        if (result > 0) 
-            return Ok("Category Deleted Successfully");
-        return BadRequest(new BaseErrorResponse(400, "An ERROR Happened while save to DB"));
-    }
-
-    [HttpGet("getall")]
-    public async Task<ActionResult<List<CategoryDTO>>> GetAllCategories()
-    {
-
-        var categories = await _categoryRepo.GetAllAsync();
-
-        var categoryDTOs = categories.Select(category => new CategoryDTO
+        [HttpPost]
+        public async Task<IActionResult> AddCategory(CategoryDTO categoryDTO)
         {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description  
-        }).ToList();
+            var category = new Category()
+            {
+                Name = categoryDTO.Name,
+                Description = categoryDTO.Description,
+                CreatedByAdmin = categoryDTO.CreatedByAdmin,
+                CreatedByAdminId = categoryDTO.CreatedByAdminId,
+                Modules = categoryDTO.Modules
+            };
+            await _unitOfWork.Repository<Category>().AddAsync(category);
+            var result = await _unitOfWork.CompleteAsync();
 
-        return Ok(categories);
+            if (result > 0)
+                return Ok(categoryDTO);
+            return BadRequest(new BaseErrorResponse(400, message: "Error happened while adding to db"));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllCategory()
+        {
+            var result = await _unitOfWork.Repository<Category>().GetAllAsync();
+            if (result.Count() > 0)
+                return Ok(result);
+            return BadRequest(new BaseErrorResponse(400));
+        }
+
+        public async Task<IActionResult> DeleteCategory(int CategoryId)
+        {
+            var category = await _categoryRepo.GetByIdAsync(CategoryId);
+
+            if (category is null)
+                return NotFound(new BaseErrorResponse(404, $"Category with Id {CategoryId} not found."));
+
+            _categoryRepo.Delete(category);
+            var result = await _unitOfWork.CompleteAsync();
+
+            if (result > 0)
+                return Ok(result);
+            return BadRequest(new BaseErrorResponse(400));
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateCategory(CategoryDTO categoryDTO)
+        {
+            var existingCategory = await _categoryRepo.GetByIdAsync(categoryDTO.Id);
+
+            if (existingCategory is null)
+                return NotFound(new BaseErrorResponse(404, $"Category with Id {categoryDTO.Id} not found."));
+
+            existingCategory.Name = categoryDTO.Name;
+            existingCategory.Description = categoryDTO.Description;
+            existingCategory.CreatedByAdmin = categoryDTO.CreatedByAdmin;
+            existingCategory.CreatedByAdminId = categoryDTO.CreatedByAdminId;
+            existingCategory.Modules = categoryDTO.Modules;
+
+            _categoryRepo.Update(existingCategory);
+
+            var result = await _unitOfWork.CompleteAsync();
+
+            if (result > 0)
+                return Ok(result);
+
+            return BadRequest(new BaseErrorResponse(400));
+
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCategoryById(int id)
+        {
+            var result = await _unitOfWork.Repository<Category>().GetByIdAsync(id);
+            if (result != null)
+                return Ok(result);
+            return NotFound(new BaseErrorResponse(404));
+        }
     }
 }
