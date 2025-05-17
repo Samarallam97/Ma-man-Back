@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using OnlineSchoolForKids.Core.Entities;
-using OnlineSchoolForKids.Core.Repositories.Interfaces;
+﻿using OnlineSchoolForKids.Core.Repositories.Interfaces;
 
 namespace OnlineSchoolForKids.API.Controllers
 {
@@ -9,78 +7,85 @@ namespace OnlineSchoolForKids.API.Controllers
     public class DiaryController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
         IGenericRepository<Diary> _diaryRepo;
 
-        public DiaryController(IUnitOfWork unitOfWork, IMapper mapper) 
+        public DiaryController(IUnitOfWork unitOfWork) 
         {
             _unitOfWork = unitOfWork;
             _diaryRepo = _unitOfWork.Repository<Diary>();
-            _mapper = mapper;
         }
 
-        [HttpPost("add")]
-        public async Task<ActionResult<DiaryDTO>> AddDiary(DiaryDTO diaryDTO)
+        [HttpPost]
+        public async Task<IActionResult> AddDiary(DiaryDTO diaryDTO)
         {
-            var diary = new Diary
+            var diary = new Diary()
             {
-                Id = diaryDTO.Id,
                 Content = diaryDTO.Content,
                 UserId = diaryDTO.UserId,
+                User = diaryDTO.User
             };
-
-            await _diaryRepo.AddAsync(diary);
-            var result = await _unitOfWork.CompleteAsync();
-           
-            if (result > 0)
-                return Ok("Diary Added Successfully");
-            return BadRequest(new BaseErrorResponse(400, "An ERROR Happened while save to DB"));
-        }
-
-        [HttpPut("update/{id}")]
-        public async Task<ActionResult<DiaryDTO>> UpdateDiary(int id, DiaryDTO diaryDTO)
-        {
-            var existingDiary = await _diaryRepo.GetByIdAsync(id);
-
-            if (existingDiary == null)
-                return NotFound(new BaseErrorResponse(404, $"Diary with Id {diaryDTO.Id} not found."));
-            
-            existingDiary.Content = diaryDTO.Content;
-            existingDiary.UserId = diaryDTO.UserId;
-
-            _diaryRepo.Update(existingDiary);
+            await _unitOfWork.Repository<Diary>().AddAsync(diary);
             var result = await _unitOfWork.CompleteAsync();
 
             if (result > 0)
                 return Ok(diaryDTO);
+            return BadRequest(new BaseErrorResponse(400,message: "Error happened while adding to db"));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllDiaries()
+        {
+            var result = await _unitOfWork.Repository<Diary>().GetAllAsync();
+            if(result.Count()>0)
+                return Ok(result);
             return BadRequest(new BaseErrorResponse(400));
         }
 
-        [HttpDelete("delete/{id}")]
-        public async Task<ActionResult<DiaryDTO>> DeleteDiary(int id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteDiary(int DiaryId)
         {
-            var Diary = await _diaryRepo.GetByIdAsync(id);
+            var diary = await _diaryRepo.GetByIdAsync(DiaryId);
 
-            if (Diary is null)
-                return NotFound(new BaseErrorResponse(404, $"Content with Id {id} not found."));
+            if (diary is null)
+                return NotFound(new BaseErrorResponse(404, $"Diary with Id {DiaryId} not found."));
 
-            _diaryRepo.Delete(Diary);
+            _diaryRepo.Delete(diary);
             var result = await _unitOfWork.CompleteAsync();
 
-            if(result > 0)
-                return Ok("Diary Deleted Successfully");
+            if (result > 0)
+                return Ok(result);
             return BadRequest(new BaseErrorResponse(400));
         }
 
-        [HttpGet("user/{id}")]
-        public async Task<ActionResult<IReadOnlyList<Diary>>> GetByUserId(int id)
+        [HttpPut]
+        public async Task<IActionResult> UpdateDiary(DiaryDTO diaryDTO)
         {
-            var spec = new Specification<Diary>(C => C.UserId == id);
-            var Result = await _diaryRepo.GetAllWithSpecAsync(spec);
+            var existingDiary = await _diaryRepo.GetByIdAsync(diaryDTO.Id);
 
-            if (Result.Count > 0)
-                return Ok(Result);
-            return NotFound(new BaseErrorResponse(404, $"Diary with UserId {id} not found."));
+            if (existingDiary is null)
+                return NotFound(new BaseErrorResponse(404, $"Diary with Id {diaryDTO.Id} not found."));
+
+            existingDiary.CreationDate = DateTime.Now;
+            existingDiary.Content = diaryDTO.Content;
+
+            _diaryRepo.Update(existingDiary);
+
+            var result = await _unitOfWork.CompleteAsync();
+
+            if (result > 0)
+                return Ok(result);
+
+            return BadRequest(new BaseErrorResponse(400));
+        
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetDiaryById(int id)
+        {
+            var result = await _unitOfWork.Repository<Diary>().GetByIdAsync(id);
+            if (result != null)
+                return Ok(result);
+            return NotFound(new BaseErrorResponse(404));
         }
 
     }
