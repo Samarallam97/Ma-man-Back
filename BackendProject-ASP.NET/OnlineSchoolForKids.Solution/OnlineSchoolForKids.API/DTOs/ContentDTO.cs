@@ -3,23 +3,24 @@
 public class ContentDTO
 {
     public int Id { get; set; }
-
     [Required]
-	public string Title { get; set; }
-	[Required]
-	public string Description { get; set; }
-	[Required]
-	public string URL { get; set; }
+    public string Title { get; set; }
+    [Required]
+    public string Description { get; set; }
+    [Required]
+    public string Type { get; set; } // video, book, audio
+    [Required]
+    public string ContentUrl { get; set; }
+    [Required]
+    public string ModuleId { get; set; }
+    [Required]
+    public Module Module { get; set; }
+    [Required]
+    public string CreatedByAdminId { get; set; }
+    [Required]
+    public ApplicationUser CreatedByAdmin { get; set; }
+    [Required]
+    public List<AgeGroup> AgeGroups { get; set; }
 
-	[Required]
-	public int FormatId { get; set; }
-
-	[Required]
-	public int CategoryId { get; set; }
-
-	[Required]
-	public int AdminId { get; set; }
-
-    public int AverageRate { get; set; }
 
 }

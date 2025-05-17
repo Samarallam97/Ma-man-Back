@@ -2,11 +2,15 @@
 {
     public class ToDoDTO
     {
-        public int Id { get; set; }
+        [Required]
+        public  int Id { get; set; }
         [Required]
         public string Content { get; set; }
-        public DateTime CreationDate { get; set; }
+        [Required]
         public bool Status { get; set; }
-        public int UserId { get; set; }
+        [Required]
+        public string UserId { get; set; }
+        [Required]
+        public ApplicationUser User { get; set; }
     }
 }

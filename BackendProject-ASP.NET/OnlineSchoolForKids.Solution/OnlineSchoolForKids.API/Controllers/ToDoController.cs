@@ -7,83 +7,88 @@ namespace OnlineSchoolForKids.API.Controllers
     public class ToDoController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
-        IGenericRepository<ToDo> _ToDo;
+        IGenericRepository<TODO> _TODORepo;
 
         public ToDoController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _ToDo = _unitOfWork.Repository<ToDo>();
+            _TODORepo = _unitOfWork.Repository<TODO>();
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> AddToDo(ToDoDTO toDoDTO)
         {
-            var toDo = new ToDo()
+            var ToDo = new TODO()
             {
-                CreationDate = toDoDTO.CreationDate,
                 Content = toDoDTO.Content,
                 Status = toDoDTO.Status,
+                User = toDoDTO.User,
                 UserId = toDoDTO.UserId
             };
-            await _unitOfWork.Repository<ToDo>().AddAsync(toDo);
+            await _unitOfWork.Repository<TODO>().AddAsync(ToDo);
             var result = await _unitOfWork.CompleteAsync();
 
             if (result > 0)
                 return Ok(toDoDTO);
-            return BadRequest(400);
+            return BadRequest(new BaseErrorResponse(400, message: "Error happened while adding to db"));
         }
-
-        [HttpDelete]
-        public async Task<IActionResult> DeleteToDo(int ToDoId)
-        {
-            var toDo = await _ToDo.GetByIdAsync(ToDoId);
-
-            if (toDo is null)
-                return NotFound(new BaseErrorResponse(404, $"ToDo with Id {ToDoId} not found."));
-
-            _ToDo.Delete(toDo);
-
-            var result = await _unitOfWork.CompleteAsync();
-
-            if (result > 0)
-                return Ok(ToDoId);
-
-            return BadRequest(new BaseErrorResponse(400));
-        }
-
-        [HttpPut("update")]
-        public async Task<ActionResult<ToDoDTO>> UpdateToDo(ToDoDTO toDoDTO)
-        {
-            var existingToDo = await _ToDo.GetByIdAsync(toDoDTO.Id);
-
-            if (existingToDo == null)
-                return NotFound(new BaseErrorResponse(404, $"Todo with Id {toDoDTO.Id} not found."));
-
-            existingToDo.Content = toDoDTO.Content;
-
-            _ToDo.Update(existingToDo);
-
-            var result = await _unitOfWork.CompleteAsync();
-
-            if (result > 0)
-                return Ok(toDoDTO);
-
-            return BadRequest(new BaseErrorResponse(400));
-        }
-
 
         [HttpGet]
-        public async Task<IActionResult> GetToDoByUserId(int UserId)
+        public async Task<IActionResult> GetAllToDos()
         {
-            var spec = new Specification<ToDo>(T => T.UserId == UserId);
-
-            var result = await _unitOfWork.Repository<ToDo>().GetAllWithSpecAsync(spec);
-
+            var result = await _unitOfWork.Repository<TODO>().GetAllAsync();
             if (result.Count() > 0)
                 return Ok(result);
             return BadRequest(new BaseErrorResponse(400));
         }
 
-        
+        [HttpDelete]
+        public async Task<IActionResult> DeleteToDo(int ToDoId)
+        {
+            var ToDo = await _TODORepo.GetByIdAsync(ToDoId);
+
+            if (ToDo is null)
+                return NotFound(new BaseErrorResponse(404, $"ToDo with Id {ToDoId} not found."));
+
+            _TODORepo.Delete(ToDo);
+            var result = await _unitOfWork.CompleteAsync();
+
+            if (result > 0)
+                return Ok(result);
+            return BadRequest(new BaseErrorResponse(400));
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateToDO(ToDoDTO toDoDTO)
+        {
+            var existingToDo = await _TODORepo.GetByIdAsync(toDoDTO.Id);
+
+            if (existingToDo is null)
+                return NotFound(new BaseErrorResponse(404, $"ToDo with Id {toDoDTO.Id} not found."));
+
+            existingToDo.Status = toDoDTO.Status;
+            existingToDo.Content = toDoDTO.Content;
+            existingToDo.CreationDate = DateTime.Now;
+
+            _TODORepo.Update(existingToDo);
+
+            var result = await _unitOfWork.CompleteAsync();
+
+            if (result > 0)
+                return Ok(result);
+
+            return BadRequest(new BaseErrorResponse(400));
+
+
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetToDoById(int id)
+        {
+            var result = await _unitOfWork.Repository<TODO>().GetByIdAsync(id);
+            if (result != null)
+                return Ok(result);
+            return NotFound(new BaseErrorResponse(404));
+        }
     }
 }
