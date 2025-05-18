@@ -50,7 +50,7 @@ public static class ApplicationSeeder
 			{
 				UserName = "root_admin",
 				Email = "root@admin.com",
-				DateOfBirth = new DateTime(2003, 7, 9)
+				FullName = "root admin",
 			};
 
 			var result = await userManager.CreateAsync(user, "Root@1234");

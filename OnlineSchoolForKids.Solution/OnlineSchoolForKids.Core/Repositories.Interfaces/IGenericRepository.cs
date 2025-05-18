@@ -6,7 +6,7 @@ public interface IGenericRepository<T> where T : BaseEntity
 	 void Update(T entity);
 	void Delete(T entity);
 
-	Task<T?> GetByIdAsync(int id);
+	Task<T?> GetByIdAsync(string id);
 	Task<IReadOnlyList<T>> GetAllAsync();
 
 	Task<T?> GetWithSpecAsync(ISpecification<T> spec);

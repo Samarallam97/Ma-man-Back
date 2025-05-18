@@ -12,10 +12,10 @@ namespace OnlineSchoolForKids.Repository.Configurations
 	{
 		public void Configure(EntityTypeBuilder<HiddenModule> builder)
 		{
-			builder.HasOne(c => c.User)
-				.WithMany()
-				.HasForeignKey(c => c.UserId)
-				.OnDelete(DeleteBehavior.Cascade);
+			//builder.HasOne(c => c.User)
+			//	.WithMany()
+			//	.HasForeignKey(c => c.ApplicationUserId)
+			//	.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasOne(c => c.Module)
 					.WithMany()

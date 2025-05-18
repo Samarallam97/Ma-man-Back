@@ -8,7 +8,7 @@ namespace OnlineSchoolForKids.Core.Entities
 {
 	public class HiddenModule : BaseEntity
 	{
-		public string UserId { get; set; } // Parent or Adult
+		public string ApplicationUserId { get; set; } // Parent or Adult
 		public ApplicationUser User { get; set; }
 		public string ModuleId { get; set; }
 		public Module Module { get; set; }

@@ -9,7 +9,8 @@ namespace OnlineSchoolForKids.Core.Entities
 	public class TODO : BaseEntity
 	{
 		public string Content { get; set; }
-		public DateTime CreationDate { get; set; } = DateTime.UtcNow;
+		public DateOnly CreationDate { get; set; }
+		public DateOnly LastUpdateDate { get; set; }
 		public bool Status { get; set; }
 		public string UserId { get; set; }
         public ApplicationUser User { get; set; }

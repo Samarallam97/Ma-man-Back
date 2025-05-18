@@ -50,6 +50,18 @@ public static class DependencyInjectionServices
 	{
 		Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 
+		Services.AddScoped(typeof(ICategoryService), typeof(CategoryService));
+
+		Services.AddScoped(typeof(IModuleService), typeof(ModuleService));
+		Services.AddScoped(typeof(IContentService), typeof(ContentService));
+		Services.AddScoped(typeof(IDiaryService), typeof(DiaryService));
+		Services.AddScoped(typeof(ITODOService), typeof(TODOService));
+		Services.AddScoped(typeof(ICommentService), typeof(CommentService));
+
+
+
+
+
 		Services.AddSingleton(typeof(ICacheService), typeof(CacheService));
 
 		Services.AddAutoMapper(m => m.AddProfile(typeof(MappingProfiles)));

@@ -11,7 +11,10 @@ namespace OnlineSchoolForKids.Core.Entities
 		public string UserId { get; set; }
 		public ApplicationUser User { get; set; }
 		public string Message { get; set; }
+		public string MessageAr { get; set; }
 		public bool IsRead { get; set; } = false;
-		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-	}
+        public string Type { get; set; }
+        public DateOnly CreatedAt { get; set; }
+        public DateOnly UpdatedAt { get; set; }
+    }
 }

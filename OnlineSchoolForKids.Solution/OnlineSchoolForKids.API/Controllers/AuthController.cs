@@ -33,13 +33,19 @@ public class AuthController : ControllerBase
 	[HttpPost("register")]
 	public async Task<IActionResult> Register([FromBody] RegisterDto model)
 	{
+		if (!await _roleManager.RoleExistsAsync(model.Role))
+			return NotFound(new BaseErrorResponse(404, "Role Not found"));
+
+		if (model.Role == "Kid")
+			if (model.ParentId is null)
+				return BadRequest(new BaseErrorResponse(400, "Can't add a kid without parent id"));
+
 		var user = new ApplicationUser
 		{
 			FullName = model.FullName,
-			UserName = model.Username,
+			UserName =model.Email,
 			Email = model.Email,
 			EmailConfirmed = true,
-			PhoneNumber = model.PhoneNumber
 		};
 
 		var result = await _userManager.CreateAsync(user, model.Password);
@@ -47,12 +53,23 @@ public class AuthController : ControllerBase
 		if (!result.Succeeded)
 			return BadRequest(new ValidationErrorResponse() { Errors = result.Errors});
 
-		if (!await _roleManager.RoleExistsAsync(model.Role))
-			await _roleManager.CreateAsync(new IdentityRole(model.Role));
+		await _userManager.AddToRoleAsync(user, model.Role);
 
-		result = await _userManager.AddToRoleAsync(user, model.Role);
+		if (model.Role == "Kid")
+		{
+			await _unitOfWork.Repository<ParentChild>().AddAsync(new ParentChild()
+			{
+				ParentId = model.ParentId,
+				ChildId = user.Id
+			});
+			var count = await _unitOfWork.CompleteAsync();
+			if (count > 0)
+				return Ok(new { Message = "Kid Added successfully" });
+			else
+				return BadRequest();
+		}
 
-		return Ok(new { Message = "User registered successfully" });
+		return Ok(new { Message = "User Added successfully" });
 	}
 
 	[HttpPost("login")]
@@ -80,11 +97,10 @@ public class AuthController : ControllerBase
 		var accessToken = await _authService.CreateTokenAsync(authClaims);
 		var refreshToken = await _authService.GenerateRefreshToken(user);
 
-		var userDto = new UserDto
+		var userDto = new UserResponseDTO
 		{
 			Id = user.Id,
-			Username = user.UserName,
-			Email = user.Email,
+			FullName = user.FullName,
 			Role = userRoles[0]
 		};
 
@@ -108,7 +124,7 @@ public class AuthController : ControllerBase
 				rt => rt.User
 			}
 		};
-		var refreshToken = _unitOfWork.Repository<RefreshToken>().GetEntityWithSpec(spec);
+		var refreshToken = await _unitOfWork.Repository<RefreshToken>().GetWithSpecAsync(spec);
 
 		if (refreshToken == null || refreshToken.IsRevoked || refreshToken.Expires < DateTime.UtcNow)
 			return Unauthorized(new BaseErrorResponse(401, "Invalid or expired refresh token"));
@@ -136,11 +152,10 @@ public class AuthController : ControllerBase
 		refreshToken.IsRevoked = true;
 		await _unitOfWork.CompleteAsync();
 
-		var userDto = new UserDto
+		var userDto = new UserResponseDTO
 		{
 			Id = user.Id,
-			Username = user.UserName,
-			Email = user.Email,
+			FullName = user.FullName,
 			Role = userRoles[0]
 		};
 
@@ -164,52 +179,22 @@ public class AuthController : ControllerBase
 
 		var roles = await _userManager.GetRolesAsync(user);
 
-		return Ok(new UserDto
+		return Ok(new UserResponseDTO
 		{
 			Id = user.Id,
-			Username = user.UserName,
-			Email = user.Email,
+			FullName = user.FullName,
+			ProfilePictureUrl = user.ProfilePictureUrl,
+			DailyUsageLimit = user.DailyUsageLimit,
+			DailyUsageToday = user.DailyUsageToday,
+			LastAccessDate = user.LastAccessDate,
 			Role = roles[0]
 		});
 	}
 
-	[Authorize(Roles = "Admin")]
-	[HttpPost("roles")]
-	public async Task<IActionResult> CreateRole([FromBody] string roleName)
+	[HttpGet("roles")]
+	public async Task<IActionResult> GetAllRoles()
 	{
-		if (string.IsNullOrEmpty(roleName))
-			return BadRequest(new BaseErrorResponse(401, "Role name is required"));
-
-		if (await _roleManager.RoleExistsAsync(roleName))
-			return BadRequest(new BaseErrorResponse(401, "Role already exists"));
-
-		var result = await _roleManager.CreateAsync(new IdentityRole(roleName));
-
-		if (!result.Succeeded)
-			return BadRequest(new ValidationErrorResponse() { Errors = result.Errors });
-
-		return Ok(new { Message = "Role created successfully" });
-	}
-
-	[Authorize(Roles = "Admin")]
-	[HttpPut("assign-role")]
-	public async Task<IActionResult> AssignRole([FromBody] AssignRoleDto model)
-	{
-		var user = await _userManager.FindByIdAsync(model.UserId);
-
-		if (user == null)
-			return NotFound(new BaseErrorResponse(404, "User not found"));
-
-		var currentRoles = await _userManager.GetRolesAsync(user);
-
-		await _userManager.RemoveFromRolesAsync(user, currentRoles);
-
-		var result = await _userManager.AddToRoleAsync(user, model.Role);
-
-		if (!result.Succeeded)
-			return BadRequest(new ValidationErrorResponse() { Errors = result.Errors });
-
-		return Ok(new { Message = "Role assigned successfully" });
+		return Ok(await _roleManager.Roles.ToListAsync());
 	}
 }
 

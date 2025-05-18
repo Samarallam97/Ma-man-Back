@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineSchoolForKids.API.DTOs.Contents;
+using OnlineSchoolForKids.API.Helpers;
 using OnlineSchoolForKids.Core.Entities;
 using OnlineSchoolForKids.Core.Repositories.Interfaces;
+using OnlineSchoolForKids.Core.Specifications.Contents;
 
 namespace OnlineSchoolForKids.API.Controllers;
 
@@ -8,101 +11,110 @@ namespace OnlineSchoolForKids.API.Controllers;
 [ApiController]
 public class ContentController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
-    IGenericRepository<Content> _contentRepo;
+	private readonly IMapper _mapper;
+	private readonly IContentService _contentService;
 
-    public ContentController(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-        _contentRepo = _unitOfWork.Repository<Content>();
-    }
+	public ContentController(IMapper mapper, IContentService contentService)
+	{
+		_mapper = mapper;
+		_contentService = contentService;
+	}
 
-    [HttpPost]
-    public async Task<IActionResult> AddContent(ContentDTO contentDTO)
-    {
-        var content = new Content()
-        {
-            Title = contentDTO.Title,
-            Description = contentDTO.Description,
-            Type = contentDTO.Type,
-            ContentUrl = contentDTO.ContentUrl,
-            ModuleId = contentDTO.ModuleId,
-            Module = contentDTO.Module,
-            CreatedByAdmin = contentDTO.CreatedByAdmin,
-            CreatedByAdminId = contentDTO.CreatedByAdminId, 
-            AgeGroups = contentDTO.AgeGroups,
-        };
-        await _unitOfWork.Repository<Content>().AddAsync(content);
-        var result = await _unitOfWork.CompleteAsync();
+	//[Authorize(Roles = "Admin")]
+	[HttpPost]
+	public async Task<IActionResult> AddContent([FromBody] ContentToAddOrUpdate contentDTO)
+	{
+		var content = _mapper.Map<ContentToAddOrUpdate, Content>(contentDTO);
 
-        if (result > 0)
-            return Ok(contentDTO);
-        return BadRequest(new BaseErrorResponse(400, message: "Error happened while adding to db"));
-    }
+		var added = await _contentService.AddAsync(content);
 
-    [HttpGet]
-    public async Task<IActionResult> GetAllDiaries()
-    {
-        var result = await _unitOfWork.Repository<Content>().GetAllAsync();
-        if (result.Count() > 0)
-            return Ok(result);
-        return BadRequest(new BaseErrorResponse(400));
-    }
+		if (!added)
+			return BadRequest(new BaseErrorResponse(400));
 
-    [HttpDelete]
-    public async Task<IActionResult> DeleteContent(int ContentId)
-    {
-        var content = await _contentRepo.GetByIdAsync(ContentId);
+		return Ok(content);
+	}
 
-        if (content is null)
-            return NotFound(new BaseErrorResponse(404, $"Content with Id {ContentId} not found."));
+	//[Authorize(Roles = "Admin")]
+	[HttpPut("update")]
+	public async Task<ActionResult<ContentDto>> UpdateContent([FromBody] ContentToAddOrUpdate contentDTO)
+	{
+		var contentFromDb = await _contentService.GetContentByIdAsync(contentDTO.Id);
 
-        _contentRepo.Delete(content);
-        var result = await _unitOfWork.CompleteAsync();
+		if (contentFromDb is null)
+			return NotFound(new BaseErrorResponse(404, $"Content with Id {contentDTO.Id} Not Found"));
 
-        if (result > 0)
-            return Ok(result);
-        return BadRequest(new BaseErrorResponse(400));
-    }
-
-    [HttpPut]
-    public async Task<IActionResult> UpdateContent(ContentDTO contentDTO)
-    {
-        var existingContent = await _contentRepo.GetByIdAsync(contentDTO.Id);
-
-        if (existingContent is null)
-            return NotFound(new BaseErrorResponse(404, $"Content with Id {contentDTO.Id} not found."));
-
-        existingContent.Title = contentDTO.Title;
-        existingContent.Description = contentDTO.Description;
-        existingContent.Type = contentDTO.Type;
-        existingContent.ContentUrl = contentDTO.ContentUrl;
-        existingContent.ModuleId = contentDTO.ModuleId;
-        existingContent.Module = contentDTO.Module;
-        existingContent.CreatedByAdmin = contentDTO.CreatedByAdmin;
-        existingContent.CreatedByAdminId = contentDTO.CreatedByAdminId;
-        existingContent.AgeGroups = contentDTO.AgeGroups;
-
-        _contentRepo.Update(existingContent);
-
-        var result = await _unitOfWork.CompleteAsync();
-
-        if (result > 0)
-            return Ok(result);
-
-        return BadRequest(new BaseErrorResponse(400));
-
-    }
+		contentFromDb.Title = contentDTO.Title;
+		contentFromDb.TitleAr = contentDTO.TitleAr;
+		contentFromDb.Description = contentDTO.Description;
+		contentFromDb.DescriptionAr = contentDTO.DescriptionAr;
+		contentFromDb.ContentUrl = contentDTO.ContentUrl;
+		contentFromDb.CreatedByAdminId = contentDTO.CreatedByAdminId;
+		contentFromDb.AgeGroups = contentDTO.AgeGroups;
 
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetContentById(int id)
-    {
-        var result = await _unitOfWork.Repository<Content>().GetByIdAsync(id);
-        if (result != null)
-            return Ok(result);
-        return NotFound(new BaseErrorResponse(404));
-    }
+
+		var updated = await _contentService.UpdateAsync(contentFromDb);
+
+		if (!updated)
+			return BadRequest(new BaseErrorResponse(400));
+
+		return Ok(contentDTO);
+	}
+
+	//[Authorize(Roles = "Admin")]
+	[HttpDelete("{id}")]
+	public async Task<IActionResult> DeleteContent(string id)
+	{
+		var contentFromDb = await _contentService.GetContentByIdAsync(id);
+
+		if (contentFromDb is null)
+			return NotFound(new BaseErrorResponse(404, $"Content with Id {id} Not Found"));
+
+		var deleted = await _contentService.DeleteAsync(contentFromDb);
+
+		if (!deleted)
+			return BadRequest(new BaseErrorResponse(400));
+		return Ok();
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> GetAll([FromQuery] ContentParams contentParams)
+	{
+		var contents = await _contentService.GetAllContentsAsync(contentParams);
+		var count = await _contentService.GetCountAsync(contentParams);
+
+		if (contentParams.Language == "En")
+		{
+
+			var contentDTOs = _mapper.Map<List<Content>, List<ContentDTOEn>>(contents.ToList());
+			return Ok(new PaginationResponse<ContentDTOEn>
+				(contentParams.PageSize, contentParams.PageIndex, count, contentDTOs));
+		}
+		else
+		{
+			var contentDTOs = _mapper.Map<IReadOnlyList<Content>, IReadOnlyList<ContentDTOAr>>(contents);
+			return Ok(new PaginationResponse<ContentDTOAr>
+					(contentParams.PageSize, contentParams.PageIndex, count, contentDTOs));
+		}
+	}
+
+
+	[HttpGet("{id}")]
+	public async Task<IActionResult> GetById(string id, string language)
+	{
+		var content = await _contentService.GetContentByIdAsync(id);
+
+		if (content is null)
+			return NotFound(new BaseErrorResponse(404));
+		ContentDto contentDTO;
+
+		if (language == "En")
+			contentDTO = _mapper.Map<Content, ContentDTOEn>(content);
+		else
+			contentDTO = _mapper.Map<Content, ContentDTOAr>(content);
+
+		return Ok(contentDTO);
+	}
 
 
 }

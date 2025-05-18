@@ -13,6 +13,7 @@ namespace OnlineSchoolForKids.Core.Entities
 		public string UserId { get; set; }
 		public ApplicationUser User { get; set; }
 		public string Text { get; set; }
-		public DateTime CreatedAt { get; set; }
+		public DateOnly CreatedAt { get; set; }
+		public DateOnly UpdatedAt { get; set; }
 	}
 }

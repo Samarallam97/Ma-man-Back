@@ -9,8 +9,13 @@ namespace OnlineSchoolForKids.Core.Entities
 	public class Content : BaseEntity
 	{
 		public string Title { get; set; }
+		public string TitleAr { get; set; }
+
 		public string Description { get; set; }
+		public string DescriptionAr { get; set; }
+
 		public string Type { get; set; } // video, book, audio
+
 		public string ContentUrl { get; set; }
 		public string ModuleId { get; set; }
 		public Module Module { get; set; }

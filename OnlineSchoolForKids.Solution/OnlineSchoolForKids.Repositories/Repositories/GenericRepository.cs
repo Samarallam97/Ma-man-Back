@@ -27,7 +27,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 		return await _context.Set<T>().ToListAsync();
 	}
 
-	public async Task<T?> GetByIdAsync(int id)
+	public async Task<T?> GetByIdAsync(string id)
 	{
 		return await _context.Set<T>().FindAsync(id);
 	}
@@ -50,12 +50,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 
 		if (spec.Criteria is not null)
 			query = query.Where(spec.Criteria);
-
-
-		if (spec.OrderBy is not null)
-			query = query.OrderBy(spec.OrderBy);
-		else if (spec.OrderByDesc is not null)
-			query = query.OrderByDescending(spec.OrderByDesc);
 
 		if (spec.Skip is not null)
 			query = query.Skip(spec.Skip.Value);

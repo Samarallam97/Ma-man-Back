@@ -41,7 +41,7 @@ namespace OnlineSchoolForKids.API.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeleteAgeGroup(int AgeGroupId)
+        public async Task<IActionResult> DeleteAgeGroup(string AgeGroupId)
         {
             var ageGroup = await _ageGroupRepo.GetByIdAsync(AgeGroupId);
 

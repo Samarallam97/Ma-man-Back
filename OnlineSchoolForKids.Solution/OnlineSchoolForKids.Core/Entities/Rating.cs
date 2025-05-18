@@ -13,6 +13,6 @@ namespace OnlineSchoolForKids.Core.Entities
 		public string UserId { get; set; }
 		public ApplicationUser User { get; set; }
 		public int Stars { get; set; }
-		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+		public DateOnly CreatedAt { get; set; } 
 	}
 }

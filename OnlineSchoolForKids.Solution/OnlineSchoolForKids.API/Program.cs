@@ -91,7 +91,7 @@ public class Program
 		#endregion
 
 		#region Data Seeding
-		await ApplicationSeeder.SeedAsync(ApplicationDbContext!);
+		//await ApplicationSeeder.SeedAsync(ApplicationDbContext!);
 		await ApplicationSeeder.InitializeRolesAsync(serviceProvider);
 		#endregion
 
