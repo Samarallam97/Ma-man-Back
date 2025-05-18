@@ -20,9 +20,7 @@ namespace OnlineSchoolForKids.API.Controllers
         {
             var result = await _unitOfWork.Repository<AgeGroup>().GetAllAsync();
 
-            if (result.Count() > 0)
-                return Ok(result);
-            return BadRequest(new BaseErrorResponse(400));
+            return Ok(result);
         }
 
         [HttpPost]
@@ -30,7 +28,8 @@ namespace OnlineSchoolForKids.API.Controllers
         {
             var ageGroup = new AgeGroup()
             {
-                Name = ageGroupDTO.Name
+                Name = ageGroupDTO.Name,
+                NameAr = ageGroupDTO.NameAr
             };
             await _unitOfWork.Repository<AgeGroup>().AddAsync(ageGroup);
             var result = await _unitOfWork.CompleteAsync();

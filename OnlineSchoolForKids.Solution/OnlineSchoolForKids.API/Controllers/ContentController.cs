@@ -13,11 +13,13 @@ public class ContentController : ControllerBase
 {
 	private readonly IMapper _mapper;
 	private readonly IContentService _contentService;
+	private readonly IUnitOfWork _unitOfWork;
 
-	public ContentController(IMapper mapper, IContentService contentService)
+	public ContentController(IMapper mapper, IContentService contentService , IUnitOfWork unitOfWork)
 	{
 		_mapper = mapper;
 		_contentService = contentService;
+		_unitOfWork=unitOfWork;
 	}
 
 	//[Authorize(Roles = "Admin")]
@@ -26,7 +28,14 @@ public class ContentController : ControllerBase
 	{
 		var content = _mapper.Map<ContentToAddOrUpdate, Content>(contentDTO);
 
-		var added = await _contentService.AddAsync(content);
+        foreach (var AgeGroupsId in contentDTO.AgeGroupsIds)
+        {
+			var ageGroup = await _unitOfWork.Repository<AgeGroup>().GetByIdAsync(AgeGroupsId);
+			content.AgeGroups.Add(ageGroup);
+			await _unitOfWork.CompleteAsync();
+		}
+
+        var added = await _contentService.AddAsync(content);
 
 		if (!added)
 			return BadRequest(new BaseErrorResponse(400));
@@ -49,9 +58,12 @@ public class ContentController : ControllerBase
 		contentFromDb.DescriptionAr = contentDTO.DescriptionAr;
 		contentFromDb.ContentUrl = contentDTO.ContentUrl;
 		contentFromDb.CreatedByAdminId = contentDTO.CreatedByAdminId;
-		contentFromDb.AgeGroups = contentDTO.AgeGroups;
 
-
+		foreach (var AgeGroupsId in contentDTO.AgeGroupsIds)
+		{
+			var ageGroup = await _unitOfWork.Repository<AgeGroup>().GetByIdAsync(AgeGroupsId);
+			contentFromDb.AgeGroups.Add(ageGroup);
+		}
 
 		var updated = await _contentService.UpdateAsync(contentFromDb);
 

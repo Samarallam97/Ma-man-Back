@@ -7,6 +7,6 @@
 		public string ContentUrl { get; set; }
 		public string ModuleId { get; set; }
 		public string? CreatedByAdminId { get; set; }
-		public List<AgeGroup> AgeGroups { get; set; }
+		public List<string> AgeGroupsIds { get; set; }
 	}
 }
