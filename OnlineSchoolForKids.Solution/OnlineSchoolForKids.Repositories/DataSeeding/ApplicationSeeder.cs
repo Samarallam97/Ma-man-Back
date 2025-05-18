@@ -22,7 +22,6 @@ public static class ApplicationSeeder
 
 	public async static Task SeedAsync(ApplicationDbContext context)
 	{
-		//await SeedEntity<Role>(context, "../OnlineSchoolForKids.Repositories/DataSeeding/Files/Roles.json");
 	}
 
 	public static async Task InitializeRolesAsync(IServiceProvider serviceProvider)
