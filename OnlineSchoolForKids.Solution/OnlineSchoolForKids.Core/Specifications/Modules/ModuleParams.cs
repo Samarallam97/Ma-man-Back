@@ -9,7 +9,7 @@ namespace OnlineSchoolForKids.Core.Specifications.Modules
 	public class ModuleParams
 	{
 		public string Language { get; set; } = "En";
-        public string CategoryId { get; set; }
+        public string? CategoryId { get; set; }
 
         private string? search;
 		public string? Search

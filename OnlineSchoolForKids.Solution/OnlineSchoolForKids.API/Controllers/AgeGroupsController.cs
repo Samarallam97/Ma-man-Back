@@ -29,8 +29,10 @@ namespace OnlineSchoolForKids.API.Controllers
             var ageGroup = new AgeGroup()
             {
                 Name = ageGroupDTO.Name,
-                NameAr = ageGroupDTO.NameAr
-            };
+                NameAr = ageGroupDTO.NameAr,
+				Color = ageGroupDTO.Color
+
+			};
             await _unitOfWork.Repository<AgeGroup>().AddAsync(ageGroup);
             var result = await _unitOfWork.CompleteAsync();
 

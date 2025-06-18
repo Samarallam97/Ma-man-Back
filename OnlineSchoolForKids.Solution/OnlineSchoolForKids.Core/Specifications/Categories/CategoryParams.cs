@@ -8,7 +8,7 @@ namespace OnlineSchoolForKids.Core.Specifications.Categories;
 
 public class CategoryParams
 {
-	public string Language { get; set; } = "En";
+	public string? Language { get; set; }
 	private string? search;
 	public string? Search
 	{

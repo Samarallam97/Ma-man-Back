@@ -35,12 +35,12 @@ namespace OnlineSchoolForKids.API.Controllers
 
 		//[Authorize(Roles = "Admin")]
 		[HttpPut("update")]
-		public async Task<ActionResult<CategoryDTO>> UpdateCategory([FromBody] CategoryToAddOrUpdate categoryDTO)
+		public async Task<ActionResult<CategoryDTO>> UpdateCategory(string Id , [FromBody] CategoryToAddOrUpdate categoryDTO)
 		{
-			var categoryFromDb = await _categoryService.GetCategoryByIdAsync(categoryDTO.Id);
+			var categoryFromDb = await _categoryService.GetCategoryByIdAsync(Id);
 
 			if (categoryFromDb is null)
-				return NotFound(new BaseErrorResponse(404, $"Category with Id {categoryDTO.Id} Not Found"));
+				return NotFound(new BaseErrorResponse(404, $"Category with Id {Id} Not Found"));
 
 			categoryFromDb.Name = categoryDTO.Name;
 			categoryFromDb.NameAR = categoryDTO.NameAR;
@@ -86,17 +86,20 @@ namespace OnlineSchoolForKids.API.Controllers
 				return Ok(new PaginationResponse<CategoryDTOEn>
 					(categoryParams.PageSize, categoryParams.PageIndex, count, categoryDTOs));
 			}
-			else
+			else if(categoryParams.Language == "Ar")
 			{
 				var categoryDTOs = _mapper.Map<IReadOnlyList<Category>, IReadOnlyList<CategoryDTOAr>>(categories);
 				return Ok(new PaginationResponse<CategoryDTOAr>
 						(categoryParams.PageSize, categoryParams.PageIndex, count, categoryDTOs));
 			}
+			else
+				return Ok(new PaginationResponse<Category>
+						(categoryParams.PageSize, categoryParams.PageIndex, count, categories));
 		}
 
 
 		[HttpGet("{id}")]
-		public async Task<IActionResult> GetById(string id, string language)
+		public async Task<IActionResult> GetById(string id, string? language = null)
 		{
 			var category = await _categoryService.GetCategoryByIdAsync(id);
 
@@ -106,8 +109,10 @@ namespace OnlineSchoolForKids.API.Controllers
 
 			if (language == "En")
 				categoryDTO = _mapper.Map<Category, CategoryDTOEn>(category);
-			else
+			else if (language == "Ar")
 				categoryDTO = _mapper.Map<Category, CategoryDTOAr>(category);
+			else
+				return Ok(category);
 
 			return Ok(categoryDTO);
 		}

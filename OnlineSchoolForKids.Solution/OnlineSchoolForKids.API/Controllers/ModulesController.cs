@@ -38,12 +38,12 @@ namespace OnlineSchoolForKids.API.Controllers
 
 		//[Authorize(Roles = "Admin")]
 		[HttpPut("update")]
-		public async Task<ActionResult<ModuleDTO>> UpdateModule([FromBody] ModuleToAddOrUpdate moduleDTO)
+		public async Task<ActionResult<ModuleDTO>> UpdateModule(string Id , [FromBody] ModuleToAddOrUpdate moduleDTO)
 		{
-			var moduleFromDb = await _moduleService.GetModuleByIdAsync(moduleDTO.Id);
+			var moduleFromDb = await _moduleService.GetModuleByIdAsync(Id);
 
 			if (moduleFromDb is null)
-				return NotFound(new BaseErrorResponse(404, $"Module with Id {moduleDTO.Id} Not Found"));
+				return NotFound(new BaseErrorResponse(404, $"Module with Id {Id} Not Found"));
 
 			moduleFromDb.Name = moduleDTO.Name;
 			moduleFromDb.NameAr = moduleDTO.NameAr;

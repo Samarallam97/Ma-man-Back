@@ -38,7 +38,10 @@ public class Program
 		{
 			options.AddPolicy("MyPolicy", options =>
 			{
-				options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+				options.WithOrigins(builder.Configuration["FrontBaseUrl"] !)
+				.AllowAnyHeader()
+				.AllowAnyMethod()
+				.AllowCredentials();
 			});
 		}); 
 		#endregion

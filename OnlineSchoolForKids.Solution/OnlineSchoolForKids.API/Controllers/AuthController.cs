@@ -29,172 +29,143 @@ public class AuthController : ControllerBase
 		_unitOfWork = unitOfWork;
 		_authService=authService;
 	}
-
 	[HttpPost("register")]
 	public async Task<IActionResult> Register([FromBody] RegisterDto model)
 	{
+		// 1. Validate role existence
 		if (!await _roleManager.RoleExistsAsync(model.Role))
 			return NotFound(new BaseErrorResponse(404, "Role Not found"));
 
-		if (model.Role == "Kid")
-			if (model.ParentId is null)
-				return BadRequest(new BaseErrorResponse(400, "Can't add a kid without parent id"));
+		// 2. Special validation for kids
+		if (model.Role == "Kid" && model.ParentId is null)
+			return BadRequest(new BaseErrorResponse(400, "Can't add a kid without parent id"));
 
+		// 3. Create user
 		var user = new ApplicationUser
 		{
 			FullName = model.FullName,
-			UserName =model.Email,
+			UserName = model.Email,
 			Email = model.Email,
 			EmailConfirmed = true,
 		};
 
 		var result = await _userManager.CreateAsync(user, model.Password);
-
 		if (!result.Succeeded)
-			return BadRequest(new ValidationErrorResponse() { Errors = result.Errors});
+			return BadRequest(new ValidationErrorResponse { Errors = result.Errors });
 
+		// 4. Assign role
 		await _userManager.AddToRoleAsync(user, model.Role);
 
+		// 5. Additional logic if role is Kid
 		if (model.Role == "Kid")
 		{
-			await _unitOfWork.Repository<ParentChild>().AddAsync(new ParentChild()
+			var parentChildLink = new ParentChild
 			{
 				ParentId = model.ParentId,
 				ChildId = user.Id
-			});
+			};
+
+			await _unitOfWork.Repository<ParentChild>().AddAsync(parentChildLink);
+
 			var count = await _unitOfWork.CompleteAsync();
-			if (count > 0)
-				return Ok(new { Message = "Kid Added successfully" });
-			else
-				return BadRequest();
+			if (count <= 0)
+				return BadRequest(new BaseErrorResponse(400, "Failed to link kid to parent"));
+
+			return Ok(new { Message = "Kid added successfully" });
 		}
 
-		return Ok(new { Message = "User Added successfully" });
+		// 6. Generic success
+		return Ok(new { Message = "User added successfully" });
 	}
 
 	[HttpPost("login")]
 	public async Task<IActionResult> Login([FromBody] LoginDto model)
 	{
 		var user = await _userManager.FindByEmailAsync(model.Email);
-
+		
 		if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
 			return Unauthorized(new BaseErrorResponse(401, "Invalid credentials"));
 
-		var authClaims = new List<Claim>
-		{
-			new Claim(ClaimTypes.Name, user.UserName),
-			new Claim(ClaimTypes.NameIdentifier, user.Id),
-			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-		};
-
-		var userRoles = await _userManager.GetRolesAsync(user);
-
-		foreach (var role in userRoles)
-		{
-			authClaims.Add(new Claim(ClaimTypes.Role, role));
-		}
-
-		var accessToken = await _authService.CreateTokenAsync(authClaims);
+		var claims = await GenerateUserClaims(user);
+		
+		var accessToken = await _authService.CreateTokenAsync(claims);
+		
 		var refreshToken = await _authService.GenerateRefreshToken(user);
 
-		var userDto = new UserResponseDTO
+		Response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions
 		{
-			Id = user.Id,
-			FullName = user.FullName,
-			Role = userRoles[0]
-		};
+			HttpOnly = true,
+			SameSite = SameSiteMode.Strict,
+			Expires = refreshToken.ExpiresAt,
+			//Secure = true // uncomment in production
+		});
 
-		return Ok(new AuthResponse
+		return Ok(new
 		{
-			AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
-			RefreshToken = refreshToken.Token,
-			AccessTokenExpiration = accessToken.ValidTo,
-			User = userDto
+			accessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
+			expiration = accessToken.ValidTo
 		});
 	}
 
-	[HttpPost("refresh")]
-	public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDto request)
+	[HttpPost("refresh-token")]
+	public async Task<IActionResult> RefreshToken()
 	{
-		var spec = new Specification<RefreshToken>()
+		var refreshToken = Request.Cookies["refreshToken"];
+		
+		if (string.IsNullOrEmpty(refreshToken))
+			return Unauthorized();
+
+		var storedToken = await _unitOfWork.Repository<RefreshToken>().GetWithSpecAsync(new Specification<RefreshToken>
 		{
-			Criteria = rt => rt.Token == request.RefreshToken,
-			Includes = new()
-			{
-				rt => rt.User
-			}
-		};
-		var refreshToken = await _unitOfWork.Repository<RefreshToken>().GetWithSpecAsync(spec);
-
-		if (refreshToken == null || refreshToken.IsRevoked || refreshToken.Expires < DateTime.UtcNow)
-			return Unauthorized(new BaseErrorResponse(401, "Invalid or expired refresh token"));
-
-		var user = refreshToken.User;
-
-		var userRoles = await _userManager.GetRolesAsync(user);
-
-		var authClaims = new List<Claim>
-		{
-			new Claim(ClaimTypes.Name, user.UserName),
-			new Claim(ClaimTypes.NameIdentifier, user.Id),
-			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-		};
-
-		foreach (var role in userRoles)
-		{
-			authClaims.Add(new Claim(ClaimTypes.Role, role));
-		}
-
-		var newAccessToken = await _authService.CreateTokenAsync(authClaims);
-		var newRefreshToken = await _authService.GenerateRefreshToken(user);
-
-		// Revoke old refresh token
-		refreshToken.IsRevoked = true;
-		await _unitOfWork.CompleteAsync();
-
-		var userDto = new UserResponseDTO
-		{
-			Id = user.Id,
-			FullName = user.FullName,
-			Role = userRoles[0]
-		};
-
-		return Ok(new AuthResponse
-		{
-			AccessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
-			RefreshToken = newRefreshToken.Token,
-			AccessTokenExpiration = newAccessToken.ValidTo,
-			User = userDto
+			Criteria = r => r.Token == refreshToken && !r.IsRevoked
 		});
-	}
 
-	[Authorize]
-	[HttpGet("profile")]
-	public async Task<IActionResult> GetProfile()
-	{
-		var user = await _userManager.GetUserAsync(User);
+		if (storedToken == null || storedToken.IsExpired)
+			return Unauthorized();
 
+		var user = await _userManager.FindByIdAsync(storedToken.UserId);
+		
 		if (user == null)
-			return NotFound(new BaseErrorResponse(404, "User not found"));
+			return Unauthorized();
 
-		var roles = await _userManager.GetRolesAsync(user);
+		var claims = await GenerateUserClaims(user);
+		
+		var newAccessToken = await _authService.CreateTokenAsync(claims);
 
-		return Ok(new UserResponseDTO
+		return Ok(new
 		{
-			Id = user.Id,
-			FullName = user.FullName,
-			ProfilePictureUrl = user.ProfilePictureUrl,
-			DailyUsageLimit = user.DailyUsageLimit,
-			DailyUsageToday = user.DailyUsageToday,
-			LastAccessDate = user.LastAccessDate,
-			Role = roles[0]
+			accessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
+			expiration = newAccessToken.ValidTo
 		});
 	}
+
 
 	[HttpGet("roles")]
 	public async Task<IActionResult> GetAllRoles()
 	{
 		return Ok(await _roleManager.Roles.ToListAsync());
 	}
+
+	private async Task<List<Claim>> GenerateUserClaims(ApplicationUser user)
+	{
+
+		var roles = await _userManager.GetRolesAsync(user);
+
+		var claims = new List<Claim>
+	{
+		new Claim("id", user.Id),
+		new Claim("fullName", user.FullName ?? ""),
+		new Claim("email", user.Email ?? ""),
+		new Claim("profilePictureUrl", user.ProfilePictureUrl ?? ""),
+		new Claim("dailyUsageLimit", user.DailyUsageLimit.ToString()),
+		new Claim("dailyUsageToday", user.DailyUsageToday.ToString()),
+		new Claim("lastAccessDate", user.LastAccessDate.ToString("o")), // ISO format
+		new Claim("role", roles[0]) 
+
+	};
+
+		return claims;
+	}
+
 }
 
