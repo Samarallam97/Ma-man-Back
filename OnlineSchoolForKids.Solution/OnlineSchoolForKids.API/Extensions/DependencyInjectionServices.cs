@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Extensions.Configuration;
 using OnlineSchoolForKids.API.Helpers;
 using OnlineSchoolForKids.Core.ServiceInterfaces;
 using OnlineSchoolForKids.Service;
@@ -45,6 +46,11 @@ public static class DependencyInjectionServices
 				ClockSkew = TimeSpan.Zero
 
 			};
+		}).AddGoogle(googleOptions =>
+		{
+			googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
+			googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+			googleOptions.CallbackPath = "/auth/login-google";
 		});
 
 		Services.AddScoped(typeof(IAuthService), typeof(AuthService));
@@ -52,7 +58,7 @@ public static class DependencyInjectionServices
 		return Services;
 	}
 
-	public static IServiceCollection AddApplicationServices(this IServiceCollection Services)
+	public static IServiceCollection AddApplicationServices(this IServiceCollection Services, IConfiguration Configuration)
 	{
 		Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 
@@ -65,13 +71,14 @@ public static class DependencyInjectionServices
 		Services.AddScoped(typeof(ICommentService), typeof(CommentService));
 
 
-
-
-
 		Services.AddSingleton(typeof(ICacheService), typeof(CacheService));
 
 		Services.AddAutoMapper(m => m.AddProfile(typeof(MappingProfiles)));
 
+
+		// Mailkit
+
+		Services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
 		return Services;
 	}
 

@@ -31,17 +31,17 @@ public class Program
 		#endregion
 
 		builder.Services.AddIdentityServicesToContainer(builder.Configuration);
-		builder.Services.AddApplicationServices();
+		builder.Services.AddApplicationServices(builder.Configuration);
 
 		#region Cors Policy
 		builder.Services.AddCors(options =>
 		{
 			options.AddPolicy("MyPolicy", options =>
 			{
-				options.WithOrigins(builder.Configuration["FrontBaseUrl"] !)
+				////options.WithOrigins(builder.Configuration["FrontBaseUrl"] !)
+				options.AllowAnyOrigin()
 				.AllowAnyHeader()
-				.AllowAnyMethod()
-				.AllowCredentials();
+				.AllowAnyMethod();
 			});
 		}); 
 		#endregion

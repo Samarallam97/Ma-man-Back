@@ -1,4 +1,7 @@
-﻿using OnlineSchoolForKids.Core.Models;
+﻿using Google.Apis.Auth;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using OnlineSchoolForKids.API.DTOs.Auth;
+using OnlineSchoolForKids.Core.Models;
 using OnlineSchoolForKids.Core.ServiceInterfaces;
 
 namespace OnlineSchoolForKids.API.Controllers;
@@ -8,10 +11,12 @@ namespace OnlineSchoolForKids.API.Controllers;
 public class AuthController : ControllerBase
 {
 	private readonly IAuthService _authService;
+	private readonly IConfiguration _configuration;
 
-	public AuthController(IAuthService authService)
+	public AuthController(IAuthService authService , IConfiguration configuration)
 	{
 		_authService=authService;
+		_configuration=configuration;
 	}
 
 	[HttpPost("register")]
@@ -74,21 +79,60 @@ public class AuthController : ControllerBase
 	}
 
 
+	[HttpPost("external-google-login")]
+	public async Task<IActionResult> ExternalLogin([FromBody] GoogleTokenDto tokenDto)
+	{
+		if (string.IsNullOrWhiteSpace(tokenDto.IdToken))
+			return BadRequest("ID token is required.");
+
+		GoogleJsonWebSignature.Payload payload;
+
+		try
+		{
+			payload = await GoogleJsonWebSignature.ValidateAsync(tokenDto.IdToken, new GoogleJsonWebSignature.ValidationSettings
+			{
+				Audience = new List<string> { _configuration["Authentication:Google:ClientId" ] }
+			});
+		}
+		catch (Exception ex)
+		{
+			return BadRequest($"Invalid Google token: {ex.Message}");
+		}
+
+		var model = new ExternalAuthModel
+		{
+			Email = payload.Email,
+			Name = payload.Name,
+			PictureUrl = payload.Picture,
+			Provider = "Google",
+			ProviderUserId = payload.Subject // Google's unique user ID
+		};
+
+		var result = await _authService.ExternalLoginAsync(model);
+
+		if (!result.IsAuthenticated)
+			return BadRequest(result.Message);
+
+		SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
+
+		return Ok(result);
+	}
+
 
 
 	/// ////////////////////////////////////////////////////////////////////////// Private Methods
 	private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
-	{
-		var cookieOptions = new CookieOptions
 		{
-			HttpOnly = true,
-			Expires = expires.ToLocalTime(),
-			Secure = true,
-			IsEssential = true,
-			SameSite = SameSiteMode.None
-		};
+			var cookieOptions = new CookieOptions
+			{
+				HttpOnly = true,
+				Expires = expires.ToLocalTime(),
+				Secure = true,
+				IsEssential = true,
+				SameSite = SameSiteMode.None
+			};
 
-		Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
-	}
+			Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+		}
 }
 

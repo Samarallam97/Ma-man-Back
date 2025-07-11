@@ -8,6 +8,9 @@ public interface IAuthService
 	Task<AuthModel> LoginAsync(LoginModel model);
 	Task<AuthModel> RefreshTokenAsync(string token);
 	Task<bool> RevokeTokenAsync(string token);
+
+	Task<AuthModel> ExternalLoginAsync(ExternalAuthModel model);
+
 	//Task<string> ForgetPasswordAsync(string email);
 
 }

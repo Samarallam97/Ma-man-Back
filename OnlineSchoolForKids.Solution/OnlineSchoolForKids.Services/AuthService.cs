@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using OnlineSchoolForKids.Core.Models;
 using OnlineSchoolForKids.Core.Specifications;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Web;
 
 namespace OnlineSchoolForKids.Service;
@@ -182,6 +183,47 @@ public class AuthService : IAuthService
 	}
 
 
+
+	public async Task<AuthModel> ExternalLoginAsync(ExternalAuthModel model)
+	{
+		var existingUser = await _userManager.FindByEmailAsync(model.Email);
+
+		if (existingUser == null)
+		{
+			var newUser = new ApplicationUser
+			{
+				UserName = model.Email,
+				Email = model.Email,
+				FullName = model.Name,
+				ProfilePictureUrl = model.PictureUrl,
+				EmailConfirmed = true
+			};
+
+			var createResult = await _userManager.CreateAsync(newUser);
+			if (!createResult.Succeeded)
+			{
+				return new AuthModel
+				{
+					IsAuthenticated = false,
+					Message = "User registration failed during external login."
+				};
+			}
+			existingUser = newUser;
+		}
+
+		var token =await  CreateJwtToken(existingUser);
+
+		var refreshToken =  GenerateRefreshToken();
+
+		return new AuthModel
+		{
+			IsAuthenticated = true,
+			AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+			AccessTokenExpiration = token.ValidTo.ToLocalTime(),
+			RefreshToken = refreshToken.Token,
+			RefreshTokenExpiration = refreshToken.ExpiresAt,
+		};
+	}
 
 	/// ////////////////////////////////////////////////////////////////////////// Private Methods
 
