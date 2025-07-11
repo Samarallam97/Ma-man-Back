@@ -1,4 +1,5 @@
 ﻿using Google.Apis.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
@@ -142,31 +143,23 @@ public class AuthController : ControllerBase
 	}
 
 
-	//[HttpPost("add-me-to-role")]
-	//public async Task<IActionResult> AddMeToRole(string role)
-	//{
-	//	var userId =  User.FindFirst("userId")?.Value;
-	//	if (userId == null)
-	//		return Unauthorized("User ID not found in token.");
+	[Authorize]
+	[HttpPost("add-me-to-role")]
+	public async Task<IActionResult> AddMeToRole([FromBody] string role)
+	{
+		var userId = User.FindFirst("userId")?.Value;
+		
+		if (userId == null)
+			return Unauthorized("User ID not found in token.");
 
-	//	var user = await _userManager.FindByIdAsync(userId);
-	//	if (user == null)
-	//		return Unauthorized("User not found.");
+		var result = await _authService.AddToRoleAsync(userId, role);
 
-	//	// Ensure the role exists
-	//	if (!await _roleManager.RoleExistsAsync(model.Role))
-	//	{
-	//		var roleResult = await _roleManager.CreateAsync(new IdentityRole(model.Role));
-	//		if (!roleResult.Succeeded)
-	//			return BadRequest("Failed to create role.");
-	//	}
+		if(!result)
+			return BadRequest("Something went wrong !");
 
-	//	var result = await _userManager.AddToRoleAsync(user, model.Role);
-	//	if (!result.Succeeded)
-	//		return BadRequest(result.Errors);
+		return Ok($"You have been added to role '{role}'.");
 
-	//	return Ok($"You have been added to role '{model.Role}'.");
-	//}
+	}
 
 	/// ////////////////////////////////////////////////////////////////////////// Private Methods
 	private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)

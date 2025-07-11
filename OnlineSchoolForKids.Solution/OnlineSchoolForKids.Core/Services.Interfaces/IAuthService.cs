@@ -15,5 +15,8 @@ public interface IAuthService
 
 	Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordModel model);
 
+	Task<bool> AddToRoleAsync(string userId , string role);
+
+
 
 }

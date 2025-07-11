@@ -285,6 +285,26 @@ public class AuthService : IAuthService
 		};
 	}
 
+
+	public async Task<bool> AddToRoleAsync(string userId ,  string role)
+	{
+
+		var user = await _userManager.FindByIdAsync(userId);
+
+		if (user == null)
+			return false;
+
+		if (!await _roleManager.RoleExistsAsync(role))
+			return false;
+
+		var result = await _userManager.AddToRoleAsync(user, role);
+
+		if (!result.Succeeded)
+			return false;
+
+		return true;
+	}
+
 	/// ////////////////////////////////////////////////////////////////////////// Private Methods
 
 	private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
