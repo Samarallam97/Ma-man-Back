@@ -68,7 +68,7 @@ public class Program
 		
 		#endregion
 
-		builder.Services.AddSwaggerGen();
+		builder.Services.ConfigureSwagger();
 		#endregion
 
 		var app = builder.Build();

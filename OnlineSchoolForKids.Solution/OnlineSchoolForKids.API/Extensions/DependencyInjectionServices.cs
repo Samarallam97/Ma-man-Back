@@ -29,14 +29,20 @@ public static class DependencyInjectionServices
 			options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 		}).AddJwtBearer(options =>
 		{
+			options.SaveToken = true; // not expired
+
+			//options.RequireHttpsMetadata = true;
+
 			options.TokenValidationParameters = new TokenValidationParameters
 			{
 				ValidateIssuer = true,
 				ValidIssuer = Configuration["JWT:Issuer"],
-				ValidateAudience = false,
+				ValidateAudience = true,
+				ValidAudience = Configuration["JWT:Audience"],
 				ValidateLifetime = true,
 				ValidateIssuerSigningKey = true,
-				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:SecretKey"]!))
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:SecretKey"]!)),
+				ClockSkew = TimeSpan.Zero
 
 			};
 		});
@@ -65,6 +71,43 @@ public static class DependencyInjectionServices
 		Services.AddSingleton(typeof(ICacheService), typeof(CacheService));
 
 		Services.AddAutoMapper(m => m.AddProfile(typeof(MappingProfiles)));
+
+		return Services;
+	}
+
+	public static IServiceCollection ConfigureSwagger(this IServiceCollection Services)
+	{
+		Services.AddSwaggerGen(options =>
+		{
+			// Add the JWT bearer definition
+			options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+			{
+				Name = "Authorization",
+				Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+				Scheme = "Bearer",
+				BearerFormat = "JWT",
+				In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+				Description = "Enter JWT Bearer token **_only_**"
+			});
+
+			// Add the requirement to use the scheme globally
+			options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+			{
+				{
+					new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+					{
+						Reference = new Microsoft.OpenApi.Models.OpenApiReference
+						{
+							Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+							Id = "Bearer"
+						}
+					},
+					Array.Empty<string>()
+				}
+			});
+
+
+		});
 
 		return Services;
 	}

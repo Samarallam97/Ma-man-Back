@@ -32,6 +32,7 @@ public class AuthController : ControllerBase
 	[HttpPost("register")]
 	public async Task<IActionResult> Register([FromBody] RegisterDto model)
 	{
+		//if(ModelState.IsValid)
 		// 1. Validate role existence
 		if (!await _roleManager.RoleExistsAsync(model.Role))
 			return NotFound(new BaseErrorResponse(404, "Role Not found"));
@@ -74,14 +75,14 @@ public class AuthController : ControllerBase
 			return Ok(new { Message = "Kid added successfully" });
 		}
 
-		// 6. Generic success
+		// 6. Generic success   [return object]
 		return Ok(new { Message = "User added successfully" });
 	}
 
 	[HttpPost("login")]
 	public async Task<IActionResult> Login([FromBody] LoginDto model)
 	{
-		var user = await _userManager.FindByEmailAsync(model.Email);
+		var user = await _userManager.FindByEmailAsync(model.Email);  // find by name
 		
 		if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
 			return Unauthorized(new BaseErrorResponse(401, "Invalid credentials"));
@@ -150,17 +151,20 @@ public class AuthController : ControllerBase
 	{
 
 		var roles = await _userManager.GetRolesAsync(user);
+		//var userClaims = await _userManager.GetClaimsAsync(user);
+
 
 		var claims = new List<Claim>
 	{
-		new Claim("id", user.Id),
+		new Claim(ClaimTypes.NameIdentifier, user.Id),
 		new Claim("fullName", user.FullName ?? ""),
 		new Claim("email", user.Email ?? ""),
 		new Claim("profilePictureUrl", user.ProfilePictureUrl ?? ""),
 		new Claim("dailyUsageLimit", user.DailyUsageLimit.ToString()),
 		new Claim("dailyUsageToday", user.DailyUsageToday.ToString()),
 		new Claim("lastAccessDate", user.LastAccessDate.ToString("o")), // ISO format
-		new Claim("role", roles[0]) 
+		new Claim(ClaimTypes.Role, roles[0]) ,
+		new Claim(JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString())
 
 	};
 
