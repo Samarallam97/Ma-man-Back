@@ -11,6 +11,9 @@ public interface IAuthService
 
 	Task<AuthModel> ExternalLoginAsync(ExternalAuthModel model);
 
-	//Task<string> ForgetPasswordAsync(string email);
+	Task<string> ForgetPasswordAsync(ForgetPasswordModel model);
+
+	Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordModel model);
+
 
 }

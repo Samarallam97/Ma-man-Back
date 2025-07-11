@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OnlineSchoolForKids.Core.Models;
 using OnlineSchoolForKids.Core.Specifications;
+using OnlineSchoolForKids.Services;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Web;
@@ -127,6 +128,62 @@ public class AuthService : IAuthService
 		return authModel;
 	}
 
+	public async Task<string> ForgetPasswordAsync(ForgetPasswordModel model)
+	{
+		var user = await _userManager.FindByEmailAsync(model.Email);
+
+		if (user != null)
+		{
+			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+			var encodedToken = Uri.EscapeDataString(token);
+
+			var resetLink = $"{model.FrontRoute}?email={model.Email}&token={encodedToken}";
+
+			var htmlBody = $@"
+				<p>Hello,</p>
+				<p>Click the link below to reset your password:</p>
+				<p><a href='{resetLink}'>Reset Password</a></p>
+				<p>If you didn't request this, you can safely ignore it.</p>";
+
+
+			IEmailService emailService = new EmailService(_configuration);
+
+			await emailService.SendEmailAsync(new Email() { Body = htmlBody, Subject =  "Reset Your Password", To = model.Email, IsHTML = true });
+		}
+
+		return "If the email exists, a reset link has been sent.";
+
+	}
+
+	public async Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordModel model)
+	{
+		var user = await _userManager.FindByEmailAsync(model.Email);
+
+		var response = new ResetPasswordResponse();
+
+		if (user == null)
+		{
+			response.Message = "Invalid request.";
+			return response;
+		}
+
+		var decodedToken = Uri.UnescapeDataString(model.Token);
+
+		var result = await _userManager.ResetPasswordAsync(user, decodedToken, model.NewPassword);
+		
+		if (!result.Succeeded)
+		{
+			response.Message = string.Join(",", result.Errors);
+			return response;
+
+		}
+
+		response.Message = "Password has been reset.";
+		response.IsResetted = true;
+		return response;
+
+	}
 	public async Task<AuthModel> RefreshTokenAsync(string token)
 	{
 		var authModel = new AuthModel();

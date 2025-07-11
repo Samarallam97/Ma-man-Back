@@ -1,9 +1,11 @@
 ﻿using Google.Apis.Auth;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using OnlineSchoolForKids.API.DTOs.Auth;
 using OnlineSchoolForKids.Core.Models;
 using OnlineSchoolForKids.Core.ServiceInterfaces;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace OnlineSchoolForKids.API.Controllers;
 
@@ -48,7 +50,67 @@ public class AuthController : ControllerBase
 		return Ok(result);
 	}
 
-	[HttpGet("refresh-token")]
+	[HttpPost("external-google-login")]
+	public async Task<IActionResult> ExternalLogin([FromBody] GoogleTokenDto tokenDto)
+	{
+		if (string.IsNullOrWhiteSpace(tokenDto.IdToken))
+			return BadRequest("ID token is required.");
+
+		GoogleJsonWebSignature.Payload payload;
+
+		try
+		{
+			payload = await GoogleJsonWebSignature.ValidateAsync(tokenDto.IdToken, new GoogleJsonWebSignature.ValidationSettings
+			{
+				Audience = new List<string> { _configuration["Authentication:Google:ClientId"] }
+			});
+		}
+		catch (Exception ex)
+		{
+			return BadRequest($"Invalid Google token: {ex.Message}");
+		}
+
+		var model = new ExternalAuthModel
+		{
+			Email = payload.Email,
+			Name = payload.Name,
+			PictureUrl = payload.Picture,
+			Provider = "Google",
+			ProviderUserId = payload.Subject // Google's unique user ID
+		};
+
+		var result = await _authService.ExternalLoginAsync(model);
+
+		if (!result.IsAuthenticated)
+			return BadRequest(result.Message);
+
+		SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
+
+		return Ok(result);
+	}
+
+	[HttpPost("forget-password")]
+	public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordModel model )
+	{
+		var result = await _authService.ForgetPasswordAsync(model);
+
+		return Ok(result);
+	}
+
+	[HttpPost("reset-password")]
+
+	public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
+	{
+		var result = await _authService.ResetPasswordAsync(model);
+
+		if(!result.IsResetted)
+			return BadRequest(result);
+
+		return Ok(result);
+	}
+
+
+		[HttpGet("refresh-token")]
 	public async Task<IActionResult> RefreshToken()
 	{
 		var refreshToken = Request.Cookies["refreshToken"];
@@ -79,48 +141,6 @@ public class AuthController : ControllerBase
 		return Ok();
 	}
 
-
-	[HttpPost("external-google-login")]
-	public async Task<IActionResult> ExternalLogin([FromBody] GoogleTokenDto tokenDto)
-	{
-		if (string.IsNullOrWhiteSpace(tokenDto.IdToken))
-			return BadRequest("ID token is required.");
-
-		GoogleJsonWebSignature.Payload payload;
-
-		try
-		{
-			payload = await GoogleJsonWebSignature.ValidateAsync(tokenDto.IdToken, new GoogleJsonWebSignature.ValidationSettings
-			{
-				Audience = new List<string> { _configuration["Authentication:Google:ClientId" ] }
-			});
-		}
-		catch (Exception ex)
-		{
-			return BadRequest($"Invalid Google token: {ex.Message}");
-		}
-
-		var model = new ExternalAuthModel
-		{
-			Email = payload.Email,
-			Name = payload.Name,
-			PictureUrl = payload.Picture,
-			Provider = "Google",
-			ProviderUserId = payload.Subject // Google's unique user ID
-		};
-
-		var result = await _authService.ExternalLoginAsync(model);
-
-		if (!result.IsAuthenticated)
-			return BadRequest(result.Message);
-
-		SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
-
-		return Ok(result);
-	}
-
-
-	
 
 
 	/// ////////////////////////////////////////////////////////////////////////// Private Methods
