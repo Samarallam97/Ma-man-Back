@@ -26,9 +26,12 @@ public class EmailService : IEmailService
 		var mail = new MimeMessage();
 		mail.Sender = MailboxAddress.Parse(_configuration["EmailSettings:Email"]);
 		mail.From.Add(new MailboxAddress(_configuration["EmailSettings:DisplayName"], _configuration["EmailSettings:Email"]));
-		mail.To.Add(MailboxAddress.Parse(email.To));
 		mail.Subject = email.Subject;
 
+		foreach (var recipient in email.To)
+		{
+			mail.To.Add(MailboxAddress.Parse(recipient));
+		}
 
 
 		mail.Body = email.IsHTML

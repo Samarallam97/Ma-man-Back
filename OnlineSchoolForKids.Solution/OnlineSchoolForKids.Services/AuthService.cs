@@ -149,7 +149,7 @@ public class AuthService : IAuthService
 
 			IEmailService emailService = new EmailService(_configuration);
 
-			await emailService.SendEmailAsync(new Email() { Body = htmlBody, Subject =  "Reset Your Password", To = model.Email, IsHTML = true });
+			await emailService.SendEmailAsync(new Email() { Body = htmlBody, Subject =  "Reset Your Password", To =  new List<string>() { model.Email }, IsHTML = true });
 		}
 
 		return "If the email exists, a reset link has been sent.";

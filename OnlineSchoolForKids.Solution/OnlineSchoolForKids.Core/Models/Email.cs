@@ -13,8 +13,7 @@ public class Email
     public string Subject { get; set; }
 
 	[Required]
-    [EmailAddress]
-	public string To { get; set; }
+	public List<string> To { get; set; } = new();
 
     [Required]
     public string Body { get; set; }
