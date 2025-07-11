@@ -45,7 +45,7 @@ namespace OnlineSchoolForKids.API.Controllers
 
 			diaryFromDb.Title = diaryDTO.Title;
 			diaryFromDb.Content = diaryDTO.Content;
-			diaryFromDb.LastUpdateDate = DateOnly.FromDateTime(DateTime.UtcNow);
+			diaryFromDb.LastUpdateDate = DateOnly.FromDateTime(DateTime.UtcNow.ToLocalTime());
 
 			var updated = await _diaryService.UpdateAsync(diaryFromDb);
 

@@ -13,7 +13,6 @@ public class MappingProfiles : Profile
     public MappingProfiles()
     {
 
-        CreateMap<RegisterDto, ApplicationUser>();
 		CreateMap<ApplicationUser, UserResponseDTO>();
 		CreateMap<UserToUpdateDto, ApplicationUser>();
 

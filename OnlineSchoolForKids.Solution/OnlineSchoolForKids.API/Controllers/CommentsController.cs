@@ -26,8 +26,8 @@ public class CommentController : ControllerBase {
 	public async Task<IActionResult> AddComment([FromBody] CommentDTO commentDTO)
 	{
 		var comment = _mapper.Map<CommentDTO, Comment>(commentDTO);
-		comment.CreatedAt  = DateOnly.FromDateTime(DateTime.UtcNow);
-		comment.UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+		comment.CreatedAt  = DateOnly.FromDateTime(DateTime.UtcNow.ToLocalTime());
+		comment.UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow.ToLocalTime());
 
 		var added = await _commentService.AddAsync(comment);
 
@@ -47,7 +47,7 @@ public class CommentController : ControllerBase {
 			return NotFound(new BaseErrorResponse(404, $"Comment with Id {commentDTO.Id} Not Found"));
 
 		commentFromDb.Text = commentDTO.Text;
-		commentFromDb.UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+		commentFromDb.UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow.ToLocalTime());
 
 		var updated = await _commentService.UpdateAsync(commentFromDb);
 

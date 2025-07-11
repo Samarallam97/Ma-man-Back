@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using OnlineSchoolForKids.Core.Models;
 
 namespace OnlineSchoolForKids.Core.ServiceInterfaces;
 
 public interface IAuthService
 {
-	Task<JwtSecurityToken> CreateTokenAsync(List<Claim> claims);
-	Task<RefreshToken> GenerateRefreshToken(ApplicationUser user);
+	Task<AuthModel> RegisterAsync(RegisterModel model);
+	Task<AuthModel> LoginAsync(LoginModel model);
+	Task<AuthModel> RefreshTokenAsync(string token);
+	Task<bool> RevokeTokenAsync(string token);
+	//Task<string> ForgetPasswordAsync(string email);
+
 }

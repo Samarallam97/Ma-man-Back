@@ -160,7 +160,7 @@ namespace OnlineSchoolForKids.API.Controllers
 				Stars = stars,
 				UserId = userId,
 				ModuleId = moduleId,
-				CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
+				CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow.ToLocalTime())
 			});
 
 			var updated = await CalculateAverageRating(module);

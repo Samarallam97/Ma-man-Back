@@ -23,7 +23,7 @@ public class NotificationsController : ControllerBase {
 	public async Task<IActionResult> AddNotification([FromBody] NotificationDTO notificationDTO)
 	{
 		var notification = _mapper.Map<NotificationDTO, Notification>(notificationDTO);
-		notification.CreatedAt  = DateOnly.FromDateTime(DateTime.UtcNow);
+		notification.CreatedAt  = DateOnly.FromDateTime(DateTime.UtcNow.ToLocalTime());
 		notification.UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
 
 		var added = await _notificationService.AddAsync(notification);

@@ -1,5 +1,4 @@
-﻿
-using OnlineSchoolForKids.API.DTOs.Auth;
+﻿using OnlineSchoolForKids.API.DTOs.Auth;
 
 namespace OnlineSchoolForKids.API.Controllers;
 
