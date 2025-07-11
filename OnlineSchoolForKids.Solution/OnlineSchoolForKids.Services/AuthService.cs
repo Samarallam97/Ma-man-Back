@@ -257,6 +257,9 @@ public class AuthService : IAuthService
 			};
 
 			var createResult = await _userManager.CreateAsync(newUser);
+
+			/// Role   : call add to role endpoint
+		
 			if (!createResult.Succeeded)
 			{
 				return new AuthModel

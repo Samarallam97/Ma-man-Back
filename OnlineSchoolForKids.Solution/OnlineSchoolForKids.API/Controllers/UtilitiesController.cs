@@ -19,22 +19,28 @@ namespace OnlineSchoolForKids.API.Controllers
 
 
         [HttpPost("send-email")]
-		public async Task<IActionResult> SendTestEmail([FromBody] EmailDto emailDto)
+		public async Task<IActionResult> SendEmail([FromBody] Email email)
 		{
 			IEmailService emailService = new EmailService(_configuration);
 
-			await emailService.SendEmailAsync(
-
-				new Email()
-				{
-					Body = emailDto.Body,
-					To = emailDto.To,
-					Subject = emailDto.Subject,
-					IsHTML = emailDto.IsHTML
-				}
-			);
+			await emailService.SendEmailAsync(email);
 
 			return Ok("Email sent!");
+		}
+
+		[HttpPost("send-sms")]
+		public async Task<IActionResult> SendSMS([FromBody] SMS sms)
+		{
+			ISMSService smsService = new SMSService(_configuration);
+
+			var message =  smsService.SendSMS(sms);
+
+			return Ok(new
+			{
+				Status = message.Status.ToString(),
+				Sid = message.Sid,
+				To = message.To
+			});
 		}
 	}
 }
