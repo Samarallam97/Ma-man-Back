@@ -1,5 +1,6 @@
 ﻿using Google.Apis.Auth;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Configuration;
 using OnlineSchoolForKids.API.DTOs.Auth;
 using OnlineSchoolForKids.Core.Models;
 using OnlineSchoolForKids.Core.ServiceInterfaces;
@@ -118,6 +119,8 @@ public class AuthController : ControllerBase
 		return Ok(result);
 	}
 
+
+	
 
 
 	/// ////////////////////////////////////////////////////////////////////////// Private Methods

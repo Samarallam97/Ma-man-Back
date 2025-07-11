@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.Configuration;
 using OnlineSchoolForKids.API.Helpers;
+using OnlineSchoolForKids.Core.Models;
 using OnlineSchoolForKids.Core.ServiceInterfaces;
 using OnlineSchoolForKids.Service;
 
@@ -78,7 +79,7 @@ public static class DependencyInjectionServices
 
 		// Mailkit
 
-		Services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+
 		return Services;
 	}
 
